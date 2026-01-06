@@ -1,0 +1,104 @@
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>PET SPACE</title>
+    <meta name="description" content="An interactive getting started guide for Brackets." />
+    <link rel="stylesheet" href="../styles/programare.css" />
+    <script src="../scripts/programare.js"></script>
+    <title>Solicitare programare</title>
+</head>
+
+<body>
+    <section class="header">
+        <nav>
+            <div class="nav-links">
+                <ul>
+                    <li><a href="index.html">🏠MENIU</a></li>
+                    <li><a href="despre.html">🐮DESPRE NOI</a></li>
+                    <li><a href="contact.html">📞CONTACTE</a></li>
+                    <li><a href="quiz1.html">❗CONCURS❗</a></li>
+                    <li><a href="shop.html">🛒SHOP</a></li>
+                    <li id="authButton">
+                        <a href="autentificare.html" title="Autentificare">🔐</a>
+                    </li>
+                    <li id="profileButton" style="display: none;">
+                        <a href="meniu.html" title="Profilul meu">👤</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <div class="titlu">Programare Online</div>
+
+        <form id="appointmentForm">
+            <div class="inputbox">
+                <span class="details">Nume</span>
+                <input type="text" id="nume" placeholder="Introdu numele tău" required />
+            </div>
+
+            <div class="inputbox">
+                <span class="details">Prenume</span>
+                <input type="text" id="prenume" placeholder="Introdu prenumele tău" required />
+            </div>
+
+
+            <div class="inputbox">
+                <span class="details">Email</span>
+                <input type="email" id="email" placeholder="Introdu adresa de email" required />
+            </div>
+
+            <div class="inputbox">
+                <span class="details">Telefon</span>
+                <input type="text" id="telefon-cifre-strict" placeholder="Ex: 0740123456" required />
+            </div>
+
+
+            <div class="inputbox">
+                <span class="details">Selectează clinica</span>
+                <select id="clinica" class="casuta-clinica" required>
+      <option value="" disabled selected>Alege clinica</option>
+      <option value="Clinica Brasov">Clinica Brasov</option>
+      <option value="Clinica Bucuresti">Clinica Bucuresti</option>
+      <option value="Clinica Sibiu">Clinica Sibiu</option>
+    </select>
+            </div>
+
+            <div class="inputbox">
+                <span class="details">Selectează data și ora</span>
+                <input type="datetime-local" id="data-ora-programare" required />
+            </div>
+
+            <div class="buton">
+                <input type="submit" class="casuta9" value="Trimite" />
+            </div>
+
+            <div class="buton">
+                <input type="reset" class="casuta10" value="Resetare" />
+            </div>
+        </form>
+
+        <p id="message" style="text-align: center; margin-top: 20px; font-weight: bold;"></p>
+
+    <script>
+        // Verifică starea de autentificare și afișează butonul corespunzător
+        document.addEventListener("DOMContentLoaded", function () {
+            const user = sessionStorage.getItem("petjoy_user");
+            const authButton = document.getElementById("authButton");
+            const profileButton = document.getElementById("profileButton");
+
+            if (user) {
+                // Utilizator logat - afișează butonul de profil
+                authButton.style.display = "none";
+                profileButton.style.display = "block";
+            } else {
+                // Utilizator nelogat - afișează butonul de autentificare
+                authButton.style.display = "block";
+                profileButton.style.display = "none";
+            }
+        });
+    </script>
+</body>
+
+</html>

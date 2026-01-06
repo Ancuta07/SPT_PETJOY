@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="ro">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Magazin Online - Clinica Veterinară</title>
+    <meta
+      name="description"
+      content="Magazin online cu produse pentru animale. Afișare disponibilitate per magazin și cumpărături online. Transport gratuit peste 100 lei."
+    />
+    <link rel="stylesheet" href="../styles/shop.css" />
+  </head>
+
+  <body>
+    <section class="header">
+      <nav>
+        <div class="nav-links">
+          <ul>
+            <li><a href="index.html">🏠MENIU</a></li>
+            <li><a href="despre.html">🐮DESPRE NOI</a></li>
+            <li><a href="contact.html">📞CONTACTE</a></li>
+            <li><a href="quiz1.html">❗CONCURS❗</a></li>
+            <li><a href="shop.html">🛒SHOP</a></li>
+            <li id="authButton">
+              <a href="autentificare.html" title="Autentificare">🔐</a>
+            </li>
+            <li id="profileButton" style="display: none">
+              <a href="meniu.html" title="Profilul meu">👤</a>
+            </li>
+          </ul>
+        </div>
+      </nav>
+    </section>
+
+    <div class="wrap">
+      <header>
+        <div class="brand">
+          <div class="logo">
+            <img src="../images/shop1.jpeg" />
+          </div>
+
+          <div>
+            <h1>Magazin Online PetJoy</h1>
+            <div class="lead">
+              Transport gratuit la comenzi ≥ <strong>100 lei</strong> • Ridicare
+              din magazine disponibile: Brașov · Constanța · Sibiu
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <main class="main">
+        <aside class="sidebar">
+          <div class="categories">
+            <h3>Categorii</h3>
+            <div class="category active" data-category="toate">Toate</div>
+            <div class="category" data-category="uscata">Mâncare uscată</div>
+            <div class="category" data-category="umeda">Mâncare umedă</div>
+            <div class="category" data-category="accesorii">Accesorii</div>
+            <div class="category" data-category="asternut">
+              Așternut igienic
+            </div>
+          </div>
+        </aside>
+
+        <section class="products-wrap">
+          <div class="filters">
+            <input type="text" class="search" placeholder="Caută produse..." />
+          </div>
+          <div class="grid" id="productGrid"></div>
+        </section>
+
+        <aside class="cart">
+          <h3>Coș de cumpărături</h3>
+          <div class="cart-list" id="cartList"></div>
+          <div class="total">Total: <span id="totalPrice">0</span> lei</div>
+          <div class="shipping-note" id="shippingNote"></div>
+          <button class="btn btn-primary" id="checkoutBtn">
+            Finalizează comanda
+          </button>
+        </aside>
+      </main>
+
+      <footer>© 2025 Clinica Veterinară - Toate drepturile rezervate.</footer>
+    </div>
+
+    <script>
+      const products = [
+        {
+          id: 1,
+          category: "uscata",
+          title: "Hrană uscată pisici Whiskas ",
+          price: 45,
+          stores: ["BRAȘOV", "CONSTANȚA"],
+          image: "../images/w.jpeg",
+        },
+        {
+          id: 2,
+          category: "umeda",
+          title: "Conservă umedă Royal Canin",
+          price: 22,
+          stores: ["SIBIU", "BRAȘOV"],
+          image: "../images/conserva_royal.jpeg",
+        },
+        {
+          id: 3,
+          category: "accesorii",
+          title: "Jucărie șoricel pentru pisici",
+          price: 15,
+          stores: ["CONSTANȚA"],
+          image: "../images/jucarie.jpeg",
+        },
+        {
+          id: 4,
+          category: "asternut",
+          title: "Așternut igienic",
+          price: 39,
+          stores: ["BRAȘOV", "SIBIU"],
+          image: "../images/nisip.jpeg",
+        },
+        {
+          id: 5,
+          category: "uscata",
+          title: "Hrană uscată câini Pedigree",
+          price: 110,
+          stores: ["CONSTANȚA", "SIBIU"],
+          image: "../images/p.jpeg",
+        },
+        {
+          id: 6,
+          category: "accesorii",
+          title: "Lesă reglabilă",
+          price: 49,
+          stores: ["BRAȘOV", "CONSTANȚA", "SIBIU"],
+          image: "../images/ham.jpeg",
+        },
+        {
+          id: 7,
+          category: "umeda",
+          title: "Conservă pisici",
+          price: 30,
+          stores: ["SIBIU"],
+          image: "../images/conserva_pisici.jpeg",
+        },
+        {
+          id: 8,
+          category: "asternut",
+          title: "Nisip parfumat pisici ",
+          price: 55,
+          stores: ["BRAȘOV", "CONSTANȚA"],
+          image: "../images/nisip_parfumat.jpeg",
+        },
+      ];
+
+      const grid = document.getElementById("productGrid");
+      const cartList = document.getElementById("cartList");
+      const totalPrice = document.getElementById("totalPrice");
+      const shippingNote = document.getElementById("shippingNote");
+      let cart = JSON.parse(localStorage.getItem("cart") || "[]");
+
+      function renderProducts(filter = "toate", search = "") {
+        grid.innerHTML = "";
+        products
+          .filter(
+            (p) =>
+              (filter === "toate" || p.category === filter) &&
+              p.title.toLowerCase().includes(search.toLowerCase())
+          )
+          .forEach((p) => {
+            const card = document.createElement("div");
+            card.className = "card";
+            card.innerHTML = `
+          <img src="${p.image}" alt="${p.title}" class="prod-img">
+          <div class="prod-title">${p.title}</div>
+          <div class="price">${p.price} lei</div>
+          <div class="stores">Disponibil în: ${p.stores.join(", ")}</div>
+          <button class="btn btn-primary" onclick="addToCart(${
+            p.id
+          })">Adaugă în coș</button>`;
+            grid.appendChild(card);
+          });
+      }
+
+      function addToCart(id) {
+        const prod = products.find((p) => p.id === id);
+        const item = cart.find((i) => i.id === id);
+        if (item) {
+          item.qty++;
+        } else {
+          cart.push({ ...prod, qty: 1 });
+        }
+        updateCart();
+      }
+
+      function updateCart() {
+        cartList.innerHTML = "";
+        let total = 0;
+        cart.forEach((i) => {
+          total += i.price * i.qty;
+          const row = document.createElement("div");
+          row.className = "cart-item";
+          row.innerHTML = `<div>${i.title}</div>
+          <div class="qty">
+            <button class="btn btn-outline" onclick="changeQty(${
+              i.id
+            },-1)">-</button>
+            ${i.qty}
+            <button class="btn btn-outline" onclick="changeQty(${
+              i.id
+            },1)">+</button>
+          </div>
+          <div>${i.price * i.qty} lei</div>`;
+          cartList.appendChild(row);
+        });
+        totalPrice.textContent = total;
+        shippingNote.textContent =
+          total >= 100 ? "Transport gratuit!" : "Transport 20 lei";
+        localStorage.setItem("cart", JSON.stringify(cart));
+      }
+
+      function changeQty(id, delta) {
+        const item = cart.find((i) => i.id === id);
+        if (!item) return;
+        item.qty += delta;
+        if (item.qty <= 0) cart = cart.filter((i) => i.id !== id);
+        updateCart();
+      }
+
+      document.querySelectorAll(".category").forEach((btn) =>
+        btn.addEventListener("click", () => {
+          document
+            .querySelectorAll(".category")
+            .forEach((c) => c.classList.remove("active"));
+          btn.classList.add("active");
+          renderProducts(
+            btn.dataset.category,
+            document.querySelector(".search").value
+          );
+        })
+      );
+
+      document.querySelector(".search").addEventListener("input", (e) => {
+        const active =
+          document.querySelector(".category.active").dataset.category;
+        renderProducts(active, e.target.value);
+      });
+
+      document.getElementById("checkoutBtn").addEventListener("click", () => {
+        if (cart.length === 0) {
+          alert("Coșul este gol!");
+          return;
+        }
+        alert("Comanda a fost plasată cu succes!");
+        cart = [];
+        updateCart();
+      });
+
+      renderProducts();
+      updateCart();
+
+      // Verifică starea de autentificare și afișează butonul corespunzător
+      document.addEventListener("DOMContentLoaded", function () {
+        const user = sessionStorage.getItem("petjoy_user");
+        const authButton = document.getElementById("authButton");
+        const profileButton = document.getElementById("profileButton");
+
+        if (user) {
+          // Utilizator logat - afișează butonul de profil
+          authButton.style.display = "none";
+          profileButton.style.display = "block";
+        } else {
+          // Utilizator nelogat - afișează butonul de autentificare
+          authButton.style.display = "block";
+          profileButton.style.display = "none";
+        }
+      });
+    </script>
+  </body>
+</html>

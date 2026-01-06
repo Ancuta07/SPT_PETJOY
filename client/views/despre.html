@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="ro">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Despre Noi - PetJoy</title>
+    <link rel="stylesheet" href="../styles/despre.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;400;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <!-- HEADER -->
+    <header class="header1">
+      <nav>
+        <div class="nav-links">
+          <ul>
+            <li><a href="index.html">MENIU</a></li>
+            <li><a href="despre.html" class="active">DESPRE NOI</a></li>
+            <li><a href="contact.html">CONTACTE</a></li>
+            <li><a href="quiz1.html">❗️CONCURS❗️</a></li>
+            <li><a href="shop.html">SHOP</a></li>
+            <li id="authButton">
+              <a href="autentificare.html" title="Autentificare">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="m10 17 5-5-5-5" />
+                  <path d="M15 12H3" />
+                  <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
+                </svg>
+              </a>
+            </li>
+            <li id="profileButton" style="display: none">
+              <a href="meniu.html" title="Profilul meu">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+                  <circle cx="12" cy="7" r="4" />
+                </svg>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </nav>
+      <div class="header-text">
+        <h1>Despre PetJoy</h1>
+        <p>
+          La PetJoy, fiecare animăluț este parte din familie. Ne dedicăm
+          sănătății și fericirii prietenilor noștri necuvântători.
+        </p>
+      </div>
+    </header>
+
+    <!-- DESPRE NOI -->
+    <section class="despre-pagina">
+      <h2>Cine suntem?</h2>
+      <p>
+        PetJoy este un cabinet veterinar modern, fondat pentru a oferi servicii
+        de calitate superioară pentru animalele de companie. Suntem pasionați de
+        ceea ce facem și credem că fiecare animal merită atenție, afecțiune și
+        tratament corespunzător.
+      </p>
+      <p>
+        Serviciile noastre includ consultații veterinare, analize, vaccinări și
+        deparazitări, intervenții chirurgicale, cosmetică, farmacie veterinară
+        și un magazin cu produse de cea mai bună calitate pentru animale.
+      </p>
+      <p>
+        Misiunea noastră este să asigurăm sănătatea și bunăstarea animalelor,
+        sprijinind stăpânii să le ofere o viață fericită și sănătoasă.
+      </p>
+    </section>
+
+    <!-- VALORI SI MISIUNE -->
+    <section class="valori-misiune">
+      <h2>Valorile și misiunea noastră</h2>
+      <div class="row-valori">
+        <div class="valori-card">
+          <h3>Profesionalism</h3>
+          <p>
+            Echipa noastră de medici și specialiști oferă servicii veterinare de
+            top, cu grijă și empatie.
+          </p>
+        </div>
+        <div class="valori-card">
+          <h3>Responsabilitate</h3>
+          <p>
+            Ne asigurăm că fiecare animal primește atenția necesară, în orice
+            situație.
+          </p>
+        </div>
+        <div class="valori-card">
+          <h3>Empatie și suport</h3>
+          <p>
+            Ghidăm proprietarii pentru a înțelege nevoile animalelor și a le
+            oferi cea mai bună îngrijire.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ECHIPA -->
+    <section class="echipa">
+      <h2>Echipa PetJoy</h2>
+      <div class="row-echipa">
+        <div class="echipa-card">
+          <img src="../images/member1.jpg" alt="Dr. Ana Popescu" />
+          <h3>Dr. Ana Popescu</h3>
+          <p>Medic veterinar șef</p>
+        </div>
+        <div class="echipa-card">
+          <img src="../images/member2.jpg" alt="Dr. Mihai Ionescu" />
+          <h3>Dr. Mihai Ionescu</h3>
+          <p>Chirurg veterinar</p>
+        </div>
+        <div class="echipa-card">
+          <img src="../images/member3.jpg" alt="Ioana Georgescu" />
+          <h3>Ioana Georgescu</h3>
+          <p>Cosmetică și îngrijire</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACT SCURT -->
+    <section class="contact-scurt">
+      <h2>Vrei să ne vizitezi?</h2>
+      <p>
+        Suntem pregătiți să oferim servicii complete și atenție fiecărui
+        animăluț care ne trece pragul. Programează o vizită sau contactează-ne
+        pentru mai multe detalii!
+      </p>
+      <a href="programare.html" class="btn">Solicită programare</a>
+    </section>
+
+    <script>
+      // Verifică starea de autentificare și afișează butonul corespunzător
+      document.addEventListener("DOMContentLoaded", function () {
+        const user = sessionStorage.getItem("petjoy_user");
+        const authButton = document.getElementById("authButton");
+        const profileButton = document.getElementById("profileButton");
+
+        if (user) {
+          // Utilizator logat - afișează butonul de profil
+          authButton.style.display = "none";
+          profileButton.style.display = "block";
+        } else {
+          // Utilizator nelogat - afișează butonul de autentificare
+          authButton.style.display = "block";
+          profileButton.style.display = "none";
+        }
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,167 @@
+/* Font și resetare de bază */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+
+body {
+  background-color: #fffaf3;
+  color: #333;
+}
+
+/* Bara de navigare */
+.header2 {
+  background: rgba(255, 255, 255, 0.8);
+  padding: 15px 0;
+  box-shadow: 0 2px 10px rgba(122, 66, 255, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  border-bottom-left-radius: 20px;
+  border-bottom-right-radius: 20px;
+}
+
+.nav-links ul {
+  list-style: none;
+  text-align: center;
+}
+
+.nav-links ul li {
+  display: inline-block;
+  margin: 0 20px;
+}
+
+.nav-links ul li a {
+  color: #7a42ff;
+  text-decoration: none;
+  font-weight: 600;
+  transition: 0.3s;
+}
+
+.nav-links ul li a:hover,
+.nav-links ul li a.active {
+  color: #c77aff;
+  transform: scale(1.1);
+}
+
+/* Secțiunea de contact */
+.contact-section {
+  padding: 50px 20px;
+}
+
+.contact-container {
+  max-width: 850px;
+  margin: 0 auto;
+  background-color: #ffffff;
+  border-radius: 15px;
+  padding: 40px;
+  box-shadow: 0 0 15px rgba(122, 66, 255, 0.15);
+}
+
+.contact-container h1 {
+  text-align: center;
+  color: #7a42ff;
+  margin-bottom: 10px;
+}
+
+.subtitle {
+  text-align: center;
+  margin-bottom: 40px;
+  color: #4a2fa1;
+}
+
+.contact-info {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.contact-info p {
+  margin: 5px 0;
+  color: #555;
+}
+
+/* Program consultații */
+.program {
+  text-align: center;
+  margin-bottom: 40px;
+  background-color: #f3e8ff;
+  padding: 20px;
+  border-radius: 10px;
+  border: 1px solid #d8b9ff;
+}
+
+.program h2 {
+  color: #7a42ff;
+  margin-bottom: 10px;
+}
+
+.program .nota {
+  margin-top: 10px;
+  color: #4a2fa1;
+}
+
+/* Urgențe */
+.urgente {
+  text-align: center;
+  margin-bottom: 50px;
+  background-color: #f8e6ff;
+  padding: 25px;
+  border-radius: 10px;
+  border: 1px solid #e0c2ff;
+  box-shadow: 0 4px 12px rgba(122, 66, 255, 0.1);
+}
+
+.urgente h2 {
+  color: #7a42ff;
+  margin-bottom: 10px;
+}
+
+.urgente .urgent-phone {
+  font-size: 1.4em;
+  color: #b966ff;
+  margin: 10px 0;
+  font-weight: bold;
+}
+
+/* Locații */
+.locations {
+  margin-bottom: 30px;
+}
+
+.locations h2 {
+  color: #7a42ff;
+  border-bottom: 2px solid #c77aff;
+  display: inline-block;
+  margin-bottom: 15px;
+}
+
+.locations ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+.locations ul li {
+  background-color: #f3e8ff;
+  margin: 8px 0;
+  padding: 10px 15px;
+  border-radius: 10px;
+  transition: background 0.3s, transform 0.3s;
+}
+
+.locations ul li:hover {
+  background-color: #e6d6ff;
+  transform: translateY(-3px);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .contact-container {
+    padding: 25px;
+  }
+
+  .nav-links ul li {
+    margin: 0 10px;
+  }
+}

@@ -1,0 +1,86 @@
+/* Reset simplu */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+
+body {
+  background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.auth-card {
+  background: #fff;
+  padding: 40px 30px;
+  border-radius: 15px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  width: 350px;
+  text-align: center;
+}
+
+.auth-card h2 {
+  margin-bottom: 20px;
+  color: #ff6f61;
+}
+
+.auth-card input,
+.auth-card select {
+  width: 100%;
+  padding: 12px 15px;
+  margin: 10px 0;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 16px;
+  outline: none;
+  transition: 0.3s;
+}
+
+.auth-card input:focus,
+.auth-card select:focus {
+  border-color: #ff6f61;
+  box-shadow: 0 0 5px rgba(255, 111, 97, 0.5);
+}
+
+.auth-card button {
+  width: 100%;
+  padding: 12px;
+  margin-top: 15px;
+  border: none;
+  border-radius: 8px;
+  background-color: #ff6f61;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.auth-card button:hover {
+  background-color: #ff3b2e;
+}
+
+#message {
+  margin-top: 15px;
+  font-size: 14px;
+  color: #ff3b2e;
+}
+
+.auth-card p {
+  margin-top: 15px;
+  font-size: 14px;
+}
+
+.auth-card a {
+  color: #ff6f61;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.auth-card a:hover {
+  text-decoration: underline;
+}

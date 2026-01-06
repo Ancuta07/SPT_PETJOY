@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="ro">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PetJoy</title>
+
+    <!-- CSS extern -->
+    <link rel="stylesheet" href="../styles/index.css" />
+
+    <!-- Fonturi -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;400;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+
+  <body>
+    <!-- HEADER -->
+    <section class="header">
+      <nav>
+        <div class="nav-links">
+          <ul>
+            <li><a href="index.html">MENIU</a></li>
+            <li><a href="despre.html">DESPRE NOI</a></li>
+            <li><a href="contact.html">CONTACTE</a></li>
+            <li><a href="quiz1.html">❗️CONCURS❗️</a></li>
+            <li><a href="shop.html">SHOP</a></li>
+            <li>
+              <a href="autentificare.html"
+                ><svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  class="lucide lucide-log-in-icon lucide-log-in"
+                >
+                  <path d="m10 17 5-5-5-5" />
+                  <path d="M15 12H3" />
+                  <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
+                </svg>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </nav>
+
+      <div class="text-box">
+        <h1 id="meniu">PetJoy</h1>
+        <h2 id="meniu">Îngrijim animalele ca pe propria familie</h2>
+        <p>
+          Animalele tale merită siguranță și afecțiune – acum mai simplu ca
+          niciodată.
+        </p>
+        <a href="programare.html" class="btn">SOLICITARE PROGRAMARE</a>
+      </div>
+    </section>
+
+    <!-- DESCRIERE -->
+    <section class="oferta">
+      <h1 id="desprenoi">Bun venit pe pagina noastră!</h1>
+      <p>
+        Suntem o echipă dedicată iubitorilor de animale, care oferă servicii
+        profesionale și grijă reală. Pe această pagină veți descoperi informații
+        despre clinicile noastre, centrele de adopție, activitățile caritabile
+        și multe alte resurse menite să îmbunătățească viața prietenilor
+        necuvântători.
+      </p>
+
+      <div class="row">
+        <div class="oferta-l animatie">
+          <div class="shape"></div>
+          <h3>Vaccinuri și Cărți de Sănătate</h3>
+          <p>
+            Oferim toate tipurile de vaccinuri pentru animalele tale, asigurând
+            o viață lungă și sănătoasă.
+          </p>
+        </div>
+        <div class="oferta-l animatie">
+          <div class="shape"></div>
+          <h3>Salon Profesional de Cosmetică</h3>
+          <p>
+            Personal calificat și iubitor de animale pentru îngrijire completă
+            și estetică impecabilă.
+          </p>
+        </div>
+        <div class="oferta-l animatie">
+          <div class="shape"></div>
+          <h3>Suport în Situații de Urgență</h3>
+          <p>
+            Suntem disponibili 24/7 pentru urgențele animalelor tale de
+            companie.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- CLINICILE NOASTRE -->
+    <section class="clinici">
+      <h1 id="clinici">Clinicile Noastre</h1>
+      <p>Ne găsiți într-una dintre următoarele locații:</p>
+      <p class="clinici-info">
+        Puteți da click pe clinica dorită pentru a vedea harta cu traseul până
+        la noi!
+      </p>
+
+      <div class="puppy-animation"></div>
+
+      <div class="row">
+        <div
+          class="clinici-l"
+          onclick="openMap('Brașov, Strada Aurel Marin 3')"
+        >
+          <img src="../images/brasovclinica.jpeg" alt="Clinica Brașov" />
+          <div class="text">
+            <h3>BRAȘOV</h3>
+            <p>Strada Aurel Marin nr.3</p>
+          </div>
+        </div>
+
+        <div
+          class="clinici-l"
+          onclick="openMap('București, Strada Doamna Ghica 133')"
+        >
+          <img src="../images/bucuresticlinica.jpg" alt="Clinica București" />
+          <div class="text">
+            <h3>BUCUREȘTI</h3>
+            <p>Strada Doamna Ghica nr.133</p>
+          </div>
+        </div>
+
+        <div
+          class="clinici-l"
+          onclick="openMap('Sibiu, Strada Semaforului 10')"
+        >
+          <img src="../images/sibiuc.jpg" alt="Clinica Sibiu" />
+          <div class="text">
+            <h3>SIBIU</h3>
+            <p>Strada Semaforului nr.10</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CENTRE DE ADOPTIE -->
+    <section class="adoptie">
+      <h1 id="adoptie">Centrele Noastre de Adopție</h1>
+      <p>
+        Ne dorim ca fiecare animaluț să își găsească un stăpân iubitor. Pentru
+        mai multe informații sunați la <b>0763 988 156</b> sau scrieți la
+        <b>PetJoy@yahoo.com</b>.
+      </p>
+
+      <div class="row">
+        <div class="adoptie-l" onclick="openMap('Brașov, Strada Lalelelor 12')">
+          <h3>BRAȘOV</h3>
+          <img src="../images/adoptie_brasov1.jpg" alt="Adopție Brașov" />
+          <p>Strada Lalelelor nr.12</p>
+        </div>
+        <div
+          class="adoptie-l"
+          onclick="openMap('Constanța, Strada Răscoalei 1907')"
+        >
+          <h3>CONSTANȚA</h3>
+          <img src="../images/adoptie_constanta1.jpg" alt="Adopție Constanța" />
+          <p>Strada Răscoalei nr.1907</p>
+        </div>
+        <div class="adoptie-l" onclick="openMap('Sibiu, Strada Bâlea 15')">
+          <h3>SIBIU</h3>
+          <img src="../images/adoptie_sibiu1.jpg" alt="Adopție Sibiu" />
+          <p>Strada Bâlea nr.15</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- CHAT BOT -->
+    <div class="chatbot">
+      <div class="chatbot-icon" onclick="toggleChat()">🤖</div>
+      <div class="chatbot-window" id="chatWindow">
+        <div class="chatbot-messages" id="chatMessages">
+          <div class="bot-message">Bună! Cu ce vă putem ajuta?</div>
+        </div>
+        <input
+          type="text"
+          id="chatInput"
+          placeholder="Scrie mesajul..."
+          onkeydown="handleChat(event)"
+        />
+      </div>
+    </div>
+
+    <!-- JavaScript extern -->
+    <script src="../scripts/script.js"></script>
+  </body>
+</html>

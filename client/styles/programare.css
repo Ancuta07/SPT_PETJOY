@@ -1,0 +1,186 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap");
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/*FUNDAL + PAGINĂ  */
+body {
+  font-family: "Poppins", sans-serif;
+  background: url("https://cdn.pixabay.com/photo/2017/02/20/18/03/cat-2083492_1280.jpg")
+    no-repeat center center fixed;
+  background-size: cover;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/*  MENIU (dreapta sus)  */
+.nav-links {
+  position: absolute;
+  top: 20px;
+  right: 40px;
+  background: rgba(0, 0, 0, 0.45);
+  padding: 12px 25px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.nav-links ul {
+  list-style: none;
+  display: flex;
+  gap: 25px;
+  margin: 0;
+  padding: 0;
+}
+
+.nav-links a {
+  text-decoration: none;
+  color: #fff;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.nav-links a:hover {
+  color: #c5a3ff;
+}
+/*  TITLU  */
+.titlu {
+  width: 800px;
+  background-color: rgba(0, 0, 0, 0.6);
+  margin: 120px auto 0;
+  color: #ffffff;
+  padding: 20px 0;
+  text-align: center;
+  border-radius: 15px 15px 0 0;
+}
+
+/* FORMULAR  */
+form {
+  animation: fadeSlideUp 1s ease-in-out;
+  background-color: rgba(0, 0, 0, 0.6);
+  padding: 30px 30px;
+  border-radius: 0 0 15px 15px;
+  max-width: 800px;
+  margin: 0 auto 60px;
+  color: #fff;
+  font-family: "Poppins", sans-serif;
+}
+
+/*  ANIMAȚIE reset*/
+@keyframes fadeSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* STRUCTURĂ imputbox */
+.inputbox {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 15px;
+  gap: 15px;
+}
+
+/*  LABEL-field names  */
+.details {
+  width: 30%;
+  font-weight: 600;
+  color: #ffffff;
+  font-size: 16px;
+  text-align: right;
+}
+
+/*  INPUT / SELECT white box */
+.inputbox input,
+.inputbox select {
+  width: 65%;
+  padding: 10px 12px;
+  border: 2px solid #ccc;
+  border-radius: 8px;
+  font-size: 15px;
+  outline: none;
+  transition: all 0.3s ease;
+  color: #000;
+  background-color: #fff;
+  box-sizing: border-box;
+}
+
+.inputbox input:focus,
+.inputbox select:focus {
+  border-color: #4caf50;
+  box-shadow: 0 0 8px rgba(76, 175, 80, 0.3);
+}
+
+/* butoane */
+.buton {
+  display: flex;
+  justify-content: center; /* Centrează pe orizontală */
+  margin: 10px 0;
+}
+
+.buton input {
+  width: 200px; /* Poți ajusta dimensiunea */
+  border: none;
+  padding: 12px 0;
+  border-radius: 10px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+/* Trimite */
+.casuta9 {
+  background-color: #4caf50;
+  color: white;
+}
+
+.casuta9:hover {
+  background-color: #45a049;
+  transform: scale(1.05);
+}
+
+/* Resetare */
+.casuta10 {
+  background-color: #ccc;
+  color: #000;
+  border-radius: 8px;
+}
+
+.casuta10:hover {
+  background-color: #bbb;
+  transform: scale(1.03);
+}
+
+/* ======= ERORI ======= */
+.error-message {
+  color: #ffaaaa;
+  font-size: 13px;
+  margin-top: 3px;
+}
+
+/* RESPONSIVE  */
+@media (max-width: 768px) {
+  .inputbox {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .inputbox input,
+  .inputbox select {
+    width: 100%;
+  }
+
+  .titlu,
+  form {
+    width: 90%;
+  }
+}

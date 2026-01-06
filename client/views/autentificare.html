@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ro">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Autentificare PetJoy</title>
+    <link rel="stylesheet" href="../styles/auth.css" />
+  </head>
+  <body>
+    <div class="auth-card">
+      <h2>Autentificare</h2>
+      <form id="loginForm">
+        <input type="email" id="email" placeholder="Email" required />
+        <input type="password" id="parola" placeholder="Parola" required />
+        <button type="submit">Login</button>
+      </form>
+
+      <p id="message"></p>
+      <p>Nu ai cont? <a href="inregistrare.html">Înregistrează-te</a></p>
+    </div>
+
+    <script>
+      // Verifică dacă utilizatorul este deja logat
+      const currentUser = sessionStorage.getItem("petjoy_user");
+      if (currentUser) {
+        window.location.href = "index.html";
+      }
+
+      const form = document.getElementById("loginForm");
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const email = document.getElementById("email").value;
+        const parola = document.getElementById("parola").value;
+
+        const response = await fetch("http://localhost:8000/api/auth/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, parola }),
+        });
+
+        const message = document.getElementById("message");
+        if (response.ok) {
+          const user = await response.json();
+
+          // Salvează datele utilizatorului în sessionStorage
+          sessionStorage.setItem("petjoy_user", JSON.stringify(user));
+
+          message.style.color = "green";
+          message.textContent = `Bine ai venit, ${user.nume}! Redirecționare...`;
+
+          // Redirecționează după 1 secundă
+          setTimeout(() => {
+            window.location.href = "index.html";
+          }, 1000);
+        } else {
+          const error = await response.text();
+          message.style.color = "red";
+          message.textContent = error;
+        }
+      });
+    </script>
+  </body>
+</html>

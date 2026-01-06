@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="ro">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Profilul Meu - PetJoy</title>
+    <link rel="stylesheet" href="../styles/meniu.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;400;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <!-- HEADER SIMPLIFICAT -->
+    <header class="header">
+      <nav>
+        <div class="logo">
+          <a href="index.html">PetJoy</a>
+        </div>
+        <div class="user-info">
+          <span id="userName">Utilizator</span>
+        </div>
+      </nav>
+    </header>
+
+    <!-- CONTAINER PRINCIPAL -->
+    <div class="container">
+      <!-- SIDEBAR -->
+      <aside class="sidebar">
+        <div class="profile-card">
+          <div class="avatar">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="60"
+              height="60"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+              <circle cx="12" cy="7" r="4" />
+            </svg>
+          </div>
+          <h2 id="profileName">Utilizator</h2>
+          <p id="profileEmail">email@example.com</p>
+          <span class="badge" id="profileRole">Utilizator</span>
+        </div>
+
+        <nav class="menu-nav">
+          <button class="menu-btn active" onclick="showSection('comenzi')">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <circle cx="9" cy="21" r="1" />
+              <circle cx="20" cy="21" r="1" />
+              <path
+                d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"
+              />
+            </svg>
+            Comenzile Mele
+          </button>
+
+          <button class="menu-btn" onclick="showSection('programari')">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+              <line x1="16" y1="2" x2="16" y2="6" />
+              <line x1="8" y1="2" x2="8" y2="6" />
+              <line x1="3" y1="10" x2="21" y2="10" />
+            </svg>
+            Programările Mele
+          </button>
+
+          <button class="menu-btn" onclick="showSection('locatii')">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+              <circle cx="12" cy="10" r="3" />
+            </svg>
+            Locații în Apropiere
+          </button>
+
+          <button class="menu-btn logout" onclick="logout()">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+              <polyline points="16 17 21 12 16 7" />
+              <line x1="21" y1="12" x2="9" y2="12" />
+            </svg>
+            Deconectare
+          </button>
+        </nav>
+      </aside>
+
+      <!-- CONTENT -->
+      <main class="content">
+        <!-- COMENZI -->
+        <section id="comenzi" class="section active">
+          <h1>Comenzile Mele</h1>
+          <div class="cards-grid">
+            <div class="order-card">
+              <div class="order-header">
+                <span class="order-number">#12345</span>
+                <span class="status status-pending">În procesare</span>
+              </div>
+              <div class="order-body">
+                <p class="order-date">Data: 15 Decembrie 2024</p>
+                <p class="order-total">Total: 250 LEI</p>
+                <ul class="order-items">
+                  <li>Hrană premium pentru câini - 2x</li>
+                  <li>Jucărie interactivă pisici</li>
+                </ul>
+              </div>
+              <button class="btn-details">Detalii comandă</button>
+            </div>
+
+            <div class="order-card">
+              <div class="order-header">
+                <span class="order-number">#12344</span>
+                <span class="status status-completed">Livrată</span>
+              </div>
+              <div class="order-body">
+                <p class="order-date">Data: 10 Decembrie 2024</p>
+                <p class="order-total">Total: 180 LEI</p>
+                <ul class="order-items">
+                  <li>Lesă pentru plimbări</li>
+                  <li>Recipient apă</li>
+                </ul>
+              </div>
+              <button class="btn-details">Detalii comandă</button>
+            </div>
+
+            <div class="empty-state" style="display: none">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="80"
+                height="80"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1"
+              >
+                <circle cx="9" cy="21" r="1" />
+                <circle cx="20" cy="21" r="1" />
+                <path
+                  d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"
+                />
+              </svg>
+              <p>Nu aveți comenzi înregistrate</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- PROGRAMĂRI -->
+        <section id="programari" class="section">
+          <h1>Programările Mele</h1>
+          <div class="cards-grid">
+            <!-- Programările vor fi încărcate dinamic din backend -->
+          </div>
+          <button
+            class="btn-primary"
+            onclick="window.location.href='programare.html'"
+          >
+            Programează o nouă vizită
+          </button>
+        </section>
+
+        <!-- LOCAȚII -->
+        <section id="locatii" class="section">
+          <h1>Locații în Apropiere</h1>
+          <div class="location-info">
+            <p>📍 Locația ta: Criuleni, Moldova</p>
+          </div>
+
+          <div class="cards-grid">
+            <div class="location-card">
+              <div
+                class="location-image"
+                style="background-image: url('../images/brasovclinica.jpeg')"
+              ></div>
+              <div class="location-body">
+                <h3>Clinica Brașov</h3>
+                <p class="location-address">
+                  📍 Strada Aurel Marin nr.3, Brașov
+                </p>
+                <p class="location-distance">~450 km</p>
+                <div class="location-services">
+                  <span class="service-badge">Veterinar</span>
+                  <span class="service-badge">Urgențe 24/7</span>
+                  <span class="service-badge">Salon</span>
+                </div>
+                <button
+                  class="btn-map"
+                  onclick="openMap('Brașov, Strada Aurel Marin 3')"
+                >
+                  Vezi pe hartă
+                </button>
+              </div>
+            </div>
+
+            <div class="location-card">
+              <div
+                class="location-image"
+                style="background-image: url('../images/bucuresticlinica.jpg')"
+              ></div>
+              <div class="location-body">
+                <h3>Clinica București</h3>
+                <p class="location-address">
+                  📍 Strada Doamna Ghica nr.133, București
+                </p>
+                <p class="location-distance">~380 km</p>
+                <div class="location-services">
+                  <span class="service-badge">Veterinar</span>
+                  <span class="service-badge">Chirurgie</span>
+                  <span class="service-badge">Analize</span>
+                </div>
+                <button
+                  class="btn-map"
+                  onclick="openMap('București, Strada Doamna Ghica 133')"
+                >
+                  Vezi pe hartă
+                </button>
+              </div>
+            </div>
+
+            <div class="location-card">
+              <div
+                class="location-image"
+                style="background-image: url('../images/sibiuc.jpg')"
+              ></div>
+              <div class="location-body">
+                <h3>Clinica Sibiu</h3>
+                <p class="location-address">
+                  📍 Strada Semaforului nr.10, Sibiu
+                </p>
+                <p class="location-distance">~500 km</p>
+                <div class="location-services">
+                  <span class="service-badge">Veterinar</span>
+                  <span class="service-badge">Vaccinări</span>
+                  <span class="service-badge">Salon</span>
+                </div>
+                <button
+                  class="btn-map"
+                  onclick="openMap('Sibiu, Strada Semaforului 10')"
+                >
+                  Vezi pe hartă
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script src="../scripts/script.js"></script>
+    <script src="../scripts/meniu.js"></script>
+  </body>
+</html>
