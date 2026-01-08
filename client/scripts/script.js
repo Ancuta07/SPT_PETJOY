@@ -6,72 +6,57 @@ function openMap(address) {
   window.open(url, "_blank", "width=800,height=600");
 }
 
-function toggleChat() {
-  const windowEl = document.getElementById("chatWindow");
-  if (windowEl.style.display === "flex") {
-    windowEl.style.display = "none";
-  } else {
-    windowEl.style.display = "flex";
-    windowEl.style.flexDirection = "column";
-  }
-}
-
-function handleChat(event) {
-  if (event.key === "Enter") {
-    const input = document.getElementById("chatInput");
-    const msg = input.value.trim();
-    if (msg === "") return;
-
-    addMessage(msg, "user");
-    input.value = "";
-
-    setTimeout(() => {
-      if (!window.botStep) window.botStep = 1;
-
-      if (window.botStep === 1) {
-        addMessage("Ce cabinet vă interesează?", "bot");
-        window.botStep = 2;
-      } else if (window.botStep === 2) {
-        addMessage("O să vă contacteze un coleg în cel mai scurt timp.", "bot");
-        window.botStep = 3;
-      }
-    }, 600);
-  }
-}
-
-function addMessage(text, sender) {
-  const chat = document.getElementById("chatMessages");
-  const div = document.createElement("div");
-  div.textContent = text;
-  div.className = sender === "bot" ? "bot-message" : "user-message";
-  chat.appendChild(div);
-  chat.scrollTop = chat.scrollHeight;
-}
-
+// ============ FUNCȚII DE AUTENTIFICARE ============
 // ============ FUNCȚII DE AUTENTIFICARE ============
 
 // Verifică statusul de autentificare
 // Actualizează funcția checkAuth în script.js
 function checkAuth() {
-  const user = sessionStorage.getItem("petjoy_user");
-  const loginLink = document.querySelector('a[href="autentificare.html"]');
+  const userStr = sessionStorage.getItem("petjoy_user");
 
-  if (user && loginLink) {
-    const userData = JSON.parse(user);
-    const li = loginLink.parentElement;
+  const accountLink = document.getElementById("accountLink");
+  const accountText = document.getElementById("accountText");
 
-    // Înlocuiește link-ul de login cu link către meniul utilizatorului
-    li.innerHTML = `
-      <a href="meniu.html" style="display: flex; align-items: center; gap: 5px;">
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/>
-          <circle cx="12" cy="7" r="4"/>
-        </svg>
-        <span style="font-size: 14px;">${userData.nume}</span>
-      </a>
-    `;
+  if (!accountLink) return;
+
+  // NU e logat -> arată login
+  if (!userStr) {
+    accountLink.href = "autentificare.html";
+    accountLink.title = "Autentificare";
+    if (accountText) accountText.style.display = "none";
+    return;
+  }
+
+  // E logat -> parse user
+  let user;
+  try {
+    user = JSON.parse(userStr);
+  } catch {
+    sessionStorage.removeItem("petjoy_user");
+    accountLink.href = "autentificare.html";
+    accountLink.title = "Autentificare";
+    if (accountText) accountText.style.display = "none";
+    return;
+  }
+
+  const rol = (user.rol || "").toUpperCase();
+
+  // Afișează numele lângă icon
+  if (accountText) {
+    accountText.textContent = user.nume || user.email || "Cont";
+    accountText.style.display = "inline";
+  }
+
+  // Link-ul de cont duce unde trebuie, după rol
+  if (rol === "ADMIN") {
+    accountLink.href = "admin.html";
+    accountLink.title = "Panou Admin";
+  } else {
+    accountLink.href = "meniu.html";
+    accountLink.title = "Profilul meu";
   }
 }
+
 
 // Afișează/ascunde meniul utilizatorului
 function showUserMenu(event) {
@@ -99,28 +84,60 @@ document.addEventListener("click", function (event) {
 
 // Funcție de logout
 function logout() {
-  if (confirm("Sigur doriți să vă deconectați?")) {
+  sessionStorage.removeItem("petjoy_user");
+  window.location.href = "autentificare.html";
+}
+
+function initAccountDropdown() {
+  const userStr = sessionStorage.getItem("petjoy_user");
+  const btn = document.getElementById("accountLink");
+  const txt = document.getElementById("accountText");
+  const icon = document.getElementById("accountIcon");
+  const logoutIcon = document.getElementById("logoutIcon");
+
+  if (!btn) return;
+
+  // Nu e logat -> arată login
+  if (!userStr) {
+    if (txt) txt.style.display = "none";
+    if (icon) icon.textContent = "🔐";
+    btn.href = "autentificare.html";
+    if (logoutIcon) logoutIcon.style.display = "none";
+    return;
+  }
+
+  // E logat -> parse user
+  let user;
+  try {
+    user = JSON.parse(userStr);
+  } catch {
     sessionStorage.removeItem("petjoy_user");
-    window.location.href = "autentificare.html";
+    btn.href = "autentificare.html";
+    if (logoutIcon) logoutIcon.style.display = "none";
+    return;
+  }
+
+  const rol = (user.rol || "").toUpperCase();
+
+  if (txt) {
+    txt.textContent = user.nume || user.email || "Cont";
+    txt.style.display = "inline";
+  }
+  if (icon) icon.textContent = "";
+
+  // Link direct către profil (după rol)
+  btn.href = rol === "ADMIN" ? "admin.html" : "meniu.html";
+
+  // Arată și conectează iconița de logout
+  if (logoutIcon) {
+    logoutIcon.style.display = "inline-block";
+    logoutIcon.addEventListener("click", (e) => {
+      e.preventDefault();
+      logout();
+    });
   }
 }
 
-// Verifică dacă utilizatorul este autentificat (pentru pagini protejate)
-function requireAuth() {
-  const user = sessionStorage.getItem("petjoy_user");
-  if (!user) {
-    alert("Trebuie să fiți autentificat pentru a accesa această pagină!");
-    window.location.href = "autentificare.html";
-    return false;
-  }
-  return true;
-}
-
-// Obține datele utilizatorului curent
-function getCurrentUser() {
-  const user = sessionStorage.getItem("petjoy_user");
-  return user ? JSON.parse(user) : null;
-}
-
-// Rulează verificarea la încărcarea paginii
-document.addEventListener("DOMContentLoaded", checkAuth);
+document.addEventListener("DOMContentLoaded", () => {
+  initAccountDropdown();
+});

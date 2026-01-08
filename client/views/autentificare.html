@@ -9,6 +9,7 @@
   <body>
     <div class="auth-card">
       <h2>Autentificare</h2>
+
       <form id="loginForm">
         <input type="email" id="email" placeholder="Email" required />
         <input type="password" id="parola" placeholder="Parola" required />
@@ -20,42 +21,59 @@
     </div>
 
     <script>
-      // Verifică dacă utilizatorul este deja logat
-      const currentUser = sessionStorage.getItem("petjoy_user");
-      if (currentUser) {
-        window.location.href = "index.html";
+      // dacă e deja logat → redirect după rol
+      const currentUserStr = sessionStorage.getItem("petjoy_user");
+      if (currentUserStr) {
+        try {
+          const u = JSON.parse(currentUserStr);
+          const rol = (u.rol || "").toUpperCase();
+          window.location.href = rol === "ADMIN" ? "index.html" : "index.html";
+        } catch {
+          sessionStorage.removeItem("petjoy_user");
+        }
       }
 
       const form = document.getElementById("loginForm");
+      const message = document.getElementById("message");
+
       form.addEventListener("submit", async (e) => {
         e.preventDefault();
-        const email = document.getElementById("email").value;
+
+        const email = document.getElementById("email").value.trim();
         const parola = document.getElementById("parola").value;
 
-        const response = await fetch("http://localhost:8000/api/auth/login", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email, parola }),
-        });
+        message.textContent = "";
+        message.style.color = "#111";
 
-        const message = document.getElementById("message");
-        if (response.ok) {
+        try {
+          const response = await fetch("http://localhost:8000/api/auth/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, parola }),
+          });
+
+          if (!response.ok) {
+            const err = await response.text().catch(() => "");
+            message.style.color = "red";
+            message.textContent = err || "Email sau parola greșită.";
+            return;
+          }
+
           const user = await response.json();
-
-          // Salvează datele utilizatorului în sessionStorage
           sessionStorage.setItem("petjoy_user", JSON.stringify(user));
 
+          const rol = (user.rol || "").toUpperCase();
           message.style.color = "green";
           message.textContent = `Bine ai venit, ${user.nume}! Redirecționare...`;
 
-          // Redirecționează după 1 secundă
           setTimeout(() => {
+            // întotdeauna redirecționează la pagina principală
             window.location.href = "index.html";
-          }, 1000);
-        } else {
-          const error = await response.text();
+          }, 600);
+        } catch (err) {
+          console.error(err);
           message.style.color = "red";
-          message.textContent = error;
+          message.textContent = "Eroare de conexiune la server.";
         }
       });
     </script>

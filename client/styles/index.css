@@ -253,71 +253,7 @@ p {
   }
 }
 
-/* === CHATBOT === */
-.chatbot {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  z-index: 100;
-}
-.chatbot-icon {
-  width: 60px;
-  height: 60px;
-  background: #7a42ff;
-  color: #fff;
-  border-radius: 50%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 30px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-  transition: transform 0.2s;
-  cursor: pointer;
-}
-.chatbot-icon:hover {
-  transform: scale(1.1);
-}
-
-.chatbot-window {
-  display: none;
-  width: 250px;
-  height: 300px;
-  background: #fff;
-  border-radius: 10px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-  flex-direction: column;
-  overflow: hidden;
-  margin-bottom: 10px;
-}
-.chatbot-messages {
-  flex: 1;
-  padding: 10px;
-  overflow-y: auto;
-  font-size: 14px;
-}
-.bot-message,
-.user-message {
-  padding: 6px 10px;
-  border-radius: 10px;
-  margin-bottom: 6px;
-  max-width: 80%;
-}
-.bot-message {
-  background: #7a42ff;
-  color: #fff;
-}
-.user-message {
-  background: #f1f1f1;
-  color: #333;
-  align-self: flex-end;
-}
-#chatInput {
-  border: none;
-  border-top: 1px solid #ccc;
-  padding: 8px;
-  width: 100%;
-  outline: none;
-}
+/* Chatbot removed */
 
 /* === RESPONSIVE === */
 @media (max-width: 768px) {

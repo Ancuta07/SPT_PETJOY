@@ -84,3 +84,26 @@ body {
 .auth-card a:hover {
   text-decoration: underline;
 }
+.login-type {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin: 10px 0 18px;
+}
+
+.login-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  cursor: pointer;
+  user-select: none;
+  background: #fff;
+  font-weight: 600;
+}
+
+.login-option input {
+  cursor: pointer;
+}

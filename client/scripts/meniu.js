@@ -248,3 +248,21 @@ function openMap(address) {
   )}`;
   window.open(url, "_blank", "width=800,height=600");
 }
+document.addEventListener("DOMContentLoaded", () => {
+  const userStr = sessionStorage.getItem("petjoy_user");
+  if (!userStr) {
+    window.location.href = "autentificare.html";
+    return;
+  }
+
+  let u;
+  try { u = JSON.parse(userStr); } catch { 
+    sessionStorage.removeItem("petjoy_user");
+    window.location.href = "autentificare.html";
+    return;
+  }
+
+  const rol = (u.rol || "").toUpperCase();
+  const adminBtn = document.getElementById("adminBtn");
+  if (adminBtn) adminBtn.style.display = rol === "ADMIN" ? "block" : "none";
+});

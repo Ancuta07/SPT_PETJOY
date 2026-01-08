@@ -13,7 +13,6 @@ Website-ul *PetJoy* reprezintă o aplicație web completă, destinată unei clin
 - 🏠 **Meniu** – Pagina principală cu prezentarea clinicii și acces rapid către celelalte secțiuni.  
 - 🐶 **Despre Noi** – Istoria clinicii, echipa medicală și valorile PetJoy.  
 - ☎️ **Contacte** – Date de contact, formular pentru programări și locația clinicii.  
-- 🏆 **Concurs** – Joc interactiv tip quiz cu întrebări legate de îngrijirea animalelor.  
 - 🛒 **Shop** – Magazin online pentru produse veterinare, jucării și accesorii.  
 
 ---
@@ -24,7 +23,6 @@ Website-ul *PetJoy* reprezintă o aplicație web completă, destinată unei clin
 - Stil personalizat în CSS și efecte JavaScript interactive.  
 - Formulare de contact și pagini responsive.  
 - Secțiune de shop cu afișare dinamică a produselor.  
-- Quiz educativ pentru utilizatori.  
 - Design modern, prietenos și adaptat tematicii veterinare.
 
 ---
@@ -33,7 +31,7 @@ Website-ul *PetJoy* reprezintă o aplicație web completă, destinată unei clin
 
 - **HTML** – structurarea paginilor web  
 - **CSS** – design și stilizare responsive  
-- **JavaScript** – interactivitate și logică pentru quiz și shop  
+-- **JavaScript** – interactivitate și logică pentru shop  
 - **jQuery** – efecte dinamice și manipularea DOM  
 - **GitHub** – găzduire și testare locală
 

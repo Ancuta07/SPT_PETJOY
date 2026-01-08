@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8" />
+  <title>Admin - PetJoy</title>
+  <link rel="stylesheet" href="../styles/admin.css" />
+</head>
+<body>
+  <header style="display:flex;align-items:center;justify-content:space-between;gap:12px;">
+    <h1>Admin Dashboard</h1>
+    <a href="index.html" class="btn-home" title="Back">back</a>
+  </header>
+
+  <div class="tabs">
+    <button data-tab="users">Users</button>
+    <button data-tab="appointments">Appointments</button>
+    <button data-tab="products">Products</button>
+    <button data-tab="orders">Orders</button>
+  </div>
+
+  <div id="content">Selectează un tab.</div>
+
+  <script>
+    const userStr = sessionStorage.getItem("petjoy_user");
+    if (!userStr) window.location.href = "autentificare.html";
+    else {
+      try {
+        const u = JSON.parse(userStr);
+        if ((u.rol || "").toUpperCase() !== "ADMIN") {
+          window.location.href = "meniu.html";
+        }
+      } catch {
+        sessionStorage.removeItem("petjoy_user");
+        window.location.href = "autentificare.html";
+      }
+    }
+  </script>
+
+  <script src="../scripts/admin.js"></script>
+</body>
+</html>
