@@ -8,7 +8,7 @@
 
 /* === HEADER === */
 .header {
-  background: url("images/hero.jpg") center/cover no-repeat;
+  background: url("../images/hero.jpg") center/cover no-repeat;
   min-height: 100vh;
   color: #fff;
   display: flex;
@@ -195,7 +195,7 @@ p {
   left: 80px;
   width: 80px;
   height: 80px;
-  background: url("images/b2d17fdd-4ba4-426c-a1b4-8842e0077489.png") no-repeat
+  background: url("../images/b2d17fdd-4ba4-426c-a1b4-8842e0077489.png") no-repeat
     center/contain;
   animation: walkPuppy 4s ease-in-out infinite alternate;
   z-index: 10;

@@ -23,6 +23,11 @@ public class OrderController {
         return ResponseEntity.ok(service.createOrder(req));
     }
 
+    @GetMapping
+    public ResponseEntity<List<Order>> getAll() {
+        return ResponseEntity.ok(service.getAllOrders());
+    }
+
     @GetMapping("/user/{email}")
     public ResponseEntity<List<Order>> getByUser(@PathVariable String email) {
         return ResponseEntity.ok(service.getOrdersForUser(email));

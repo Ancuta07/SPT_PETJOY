@@ -2,6 +2,7 @@ package com.app.backend_service.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 @Entity
 @Table(name="order_items")
@@ -17,6 +18,7 @@ public class OrderItem {
 
     @ManyToOne(optional=false)
     @JoinColumn(name="order_id")
+    @JsonBackReference
     private Order order;
 
     @Column(nullable=false)
