@@ -84,109 +84,191 @@
     </div>
 
     <script>
-      const products = [
+      /**
+       * FALLBACK: produse hardcodate (ca să nu pierzi nimic).
+       * Dacă backend-ul nu merge / nu răspunde, le folosim pe astea.
+       */
+      const fallbackProducts = [
         {
           id: 1,
-          category: "uscata",
-          title: "Hrană uscată pisici Whiskas ",
-          price: 45,
-          stores: ["BRAȘOV", "CONSTANȚA"],
-          image: "../images/w.jpeg",
+          categorie: "uscata",
+          nume: "Hrană uscată pisici Whiskas",
+          pret: 45,
+          stoc: 999,
+          imageUrl: "../images/w.jpeg",
+          descriere: "",
         },
         {
           id: 2,
-          category: "umeda",
-          title: "Conservă umedă Royal Canin",
-          price: 22,
-          stores: ["SIBIU", "BRAȘOV"],
-          image: "../images/conserva_royal.jpeg",
+          categorie: "umeda",
+          nume: "Conservă umedă Royal Canin",
+          pret: 22,
+          stoc: 999,
+          imageUrl: "../images/conserva_royal.jpeg",
+          descriere: "",
         },
         {
           id: 3,
-          category: "accesorii",
-          title: "Jucărie șoricel pentru pisici",
-          price: 15,
-          stores: ["CONSTANȚA"],
-          image: "../images/jucarie.jpeg",
+          categorie: "accesorii",
+          nume: "Jucărie șoricel pentru pisici",
+          pret: 15,
+          stoc: 999,
+          imageUrl: "../images/jucarie.jpeg",
+          descriere: "",
         },
         {
           id: 4,
-          category: "asternut",
-          title: "Așternut igienic",
-          price: 39,
-          stores: ["BRAȘOV", "SIBIU"],
-          image: "../images/nisip.jpeg",
+          categorie: "asternut",
+          nume: "Așternut igienic",
+          pret: 39,
+          stoc: 999,
+          imageUrl: "../images/nisip.jpeg",
+          descriere: "",
         },
         {
           id: 5,
-          category: "uscata",
-          title: "Hrană uscată câini Pedigree",
-          price: 110,
-          stores: ["CONSTANȚA", "SIBIU"],
-          image: "../images/p.jpeg",
+          categorie: "uscata",
+          nume: "Hrană uscată câini Pedigree",
+          pret: 110,
+          stoc: 999,
+          imageUrl: "../images/p.jpeg",
+          descriere: "",
         },
         {
           id: 6,
-          category: "accesorii",
-          title: "Lesă reglabilă",
-          price: 49,
-          stores: ["BRAȘOV", "CONSTANȚA", "SIBIU"],
-          image: "../images/ham.jpeg",
+          categorie: "accesorii",
+          nume: "Lesă reglabilă",
+          pret: 49,
+          stoc: 999,
+          imageUrl: "../images/ham.jpeg",
+          descriere: "",
         },
         {
           id: 7,
-          category: "umeda",
-          title: "Conservă pisici",
-          price: 30,
-          stores: ["SIBIU"],
-          image: "../images/conserva_pisici.jpeg",
+          categorie: "umeda",
+          nume: "Conservă pisici",
+          pret: 30,
+          stoc: 999,
+          imageUrl: "../images/conserva_pisici.jpeg",
+          descriere: "",
         },
         {
           id: 8,
-          category: "asternut",
-          title: "Nisip parfumat pisici ",
-          price: 55,
-          stores: ["BRAȘOV", "CONSTANȚA"],
-          image: "../images/nisip_parfumat.jpeg",
+          categorie: "asternut",
+          nume: "Nisip parfumat pisici",
+          pret: 55,
+          stoc: 999,
+          imageUrl: "../images/nisip_parfumat.jpeg",
+          descriere: "",
         },
       ];
+
+      /**
+       * Lista reală de produse (ideal vine din backend).
+       * Dacă nu reușim să încărcăm din backend, punem fallbackProducts.
+       */
+      let products = [];
 
       const grid = document.getElementById("productGrid");
       const cartList = document.getElementById("cartList");
       const totalPrice = document.getElementById("totalPrice");
       const shippingNote = document.getElementById("shippingNote");
+
+      // în coș salvăm minimul ca să nu depindem de structura backend
       let cart = JSON.parse(localStorage.getItem("cart") || "[]");
+
+      /**
+       * Încearcă să ia produsele din backend.
+       * Dacă backend nu merge / e gol / dă eroare => fallbackProducts.
+       */
+      async function loadProducts() {
+        try {
+          const res = await fetch("http://localhost:8000/api/products");
+          if (!res.ok) throw new Error("Backend error: " + res.status);
+
+          const data = await res.json();
+
+          // dacă backend răspunde dar e gol, folosim fallback (ca să ai UI populat)
+          if (!Array.isArray(data) || data.length === 0) {
+            products = fallbackProducts;
+          } else {
+            products = data;
+          }
+        } catch (err) {
+          console.warn("Backend indisponibil, folosesc fallbackProducts.", err);
+          products = fallbackProducts;
+        }
+
+        const active =
+          document.querySelector(".category.active")?.dataset.category ||
+          "toate";
+        const search = document.querySelector(".search").value;
+        renderProducts(active, search);
+      }
 
       function renderProducts(filter = "toate", search = "") {
         grid.innerHTML = "";
+
+        const f = (filter || "toate").toLowerCase();
+        const s = (search || "").toLowerCase();
+
         products
-          .filter(
-            (p) =>
-              (filter === "toate" || p.category === filter) &&
-              p.title.toLowerCase().includes(search.toLowerCase())
-          )
+          .filter((p) => {
+            const categorie = (p.categorie || "").toLowerCase();
+            const nume = (p.nume || "").toLowerCase();
+
+            const matchCategory = f === "toate" || categorie === f;
+            const matchSearch = nume.includes(s);
+
+            return matchCategory && matchSearch;
+          })
           .forEach((p) => {
             const card = document.createElement("div");
             card.className = "card";
+
+            const img = p.imageUrl || "../images/shop.jpeg";
+            const nume = p.nume || "Produs";
+            const descriere = p.descriere || "";
+            const pret = p.pret ?? 0;
+            const stoc = p.stoc ?? 0;
+
             card.innerHTML = `
-          <img src="${p.image}" alt="${p.title}" class="prod-img">
-          <div class="prod-title">${p.title}</div>
-          <div class="price">${p.price} lei</div>
-          <div class="stores">Disponibil în: ${p.stores.join(", ")}</div>
-          <button class="btn btn-primary" onclick="addToCart(${
-            p.id
-          })">Adaugă în coș</button>`;
+              <img src="${img}" alt="${nume}" class="prod-img">
+              <div class="prod-title">${nume}</div>
+              ${descriere ? `<div class="prod-desc">${descriere}</div>` : ``}
+              <div class="price">${pret} lei</div>
+              <div class="stores">Stoc: ${stoc}</div>
+              <button class="btn btn-primary" onclick="addToCart(${p.id})" ${
+              stoc <= 0 ? "disabled" : ""
+            }>
+                ${stoc <= 0 ? "Stoc epuizat" : "Adaugă în coș"}
+              </button>
+            `;
+
             grid.appendChild(card);
           });
       }
 
       function addToCart(id) {
         const prod = products.find((p) => p.id === id);
+        if (!prod) return;
+
+        if ((prod.stoc ?? 0) <= 0) {
+          alert("Produsul nu mai este în stoc.");
+          return;
+        }
+
         const item = cart.find((i) => i.id === id);
         if (item) {
           item.qty++;
         } else {
-          cart.push({ ...prod, qty: 1 });
+          cart.push({
+            id: prod.id,
+            nume: prod.nume,
+            pret: prod.pret,
+            imageUrl: prod.imageUrl,
+            qty: 1,
+          });
         }
         updateCart();
       }
@@ -194,26 +276,28 @@
       function updateCart() {
         cartList.innerHTML = "";
         let total = 0;
+
         cart.forEach((i) => {
-          total += i.price * i.qty;
+          total += (i.pret || 0) * i.qty;
+
           const row = document.createElement("div");
           row.className = "cart-item";
-          row.innerHTML = `<div>${i.title}</div>
-          <div class="qty">
-            <button class="btn btn-outline" onclick="changeQty(${
-              i.id
-            },-1)">-</button>
-            ${i.qty}
-            <button class="btn btn-outline" onclick="changeQty(${
-              i.id
-            },1)">+</button>
-          </div>
-          <div>${i.price * i.qty} lei</div>`;
+          row.innerHTML = `
+            <div>${i.nume}</div>
+            <div class="qty">
+              <button class="btn btn-outline" onclick="changeQty(${i.id},-1)">-</button>
+              ${i.qty}
+              <button class="btn btn-outline" onclick="changeQty(${i.id},1)">+</button>
+            </div>
+            <div>${(i.pret || 0) * i.qty} lei</div>
+          `;
           cartList.appendChild(row);
         });
+
         totalPrice.textContent = total;
         shippingNote.textContent =
           total >= 100 ? "Transport gratuit!" : "Transport 20 lei";
+
         localStorage.setItem("cart", JSON.stringify(cart));
       }
 
@@ -225,37 +309,79 @@
         updateCart();
       }
 
+      // categorii
       document.querySelectorAll(".category").forEach((btn) =>
         btn.addEventListener("click", () => {
           document
             .querySelectorAll(".category")
             .forEach((c) => c.classList.remove("active"));
           btn.classList.add("active");
-          renderProducts(
-            btn.dataset.category,
-            document.querySelector(".search").value
-          );
+
+          renderProducts(btn.dataset.category, document.querySelector(".search").value);
         })
       );
 
+      // search
       document.querySelector(".search").addEventListener("input", (e) => {
         const active =
           document.querySelector(".category.active").dataset.category;
         renderProducts(active, e.target.value);
       });
 
-      document.getElementById("checkoutBtn").addEventListener("click", () => {
+      // checkout -> POST order către backend
+      document.getElementById("checkoutBtn").addEventListener("click", async () => {
         if (cart.length === 0) {
           alert("Coșul este gol!");
           return;
         }
-        alert("Comanda a fost plasată cu succes!");
-        cart = [];
-        updateCart();
+
+        const userStr = sessionStorage.getItem("petjoy_user");
+        if (!userStr) {
+          alert("Trebuie să te autentifici ca să finalizezi comanda.");
+          window.location.href = "autentificare.html";
+          return;
+        }
+
+        const user = JSON.parse(userStr);
+
+        const payload = {
+          email: user.email,
+          items: cart.map((c) => ({
+            productId: c.id,
+            quantity: c.qty,
+          })),
+        };
+
+        try {
+          const res = await fetch("http://localhost:8000/api/orders", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+          });
+
+          if (!res.ok) {
+            const txt = await res.text();
+            alert("Eroare la plasarea comenzii: " + txt);
+            return;
+          }
+
+          alert("Comanda a fost plasată cu succes!");
+          cart = [];
+          updateCart();
+
+          // reîncarcă produse (când backend va merge, vei vedea stoc actualizat)
+          loadProducts();
+
+          window.location.href = "meniu.html";
+        } catch (err) {
+          console.error(err);
+          alert("Backend indisponibil. Nu pot plasa comanda acum.");
+        }
       });
 
-      renderProducts();
+      // inițial
       updateCart();
+      loadProducts();
 
       // Verifică starea de autentificare și afișează butonul corespunzător
       document.addEventListener("DOMContentLoaded", function () {
@@ -264,11 +390,9 @@
         const profileButton = document.getElementById("profileButton");
 
         if (user) {
-          // Utilizator logat - afișează butonul de profil
           authButton.style.display = "none";
           profileButton.style.display = "block";
         } else {
-          // Utilizator nelogat - afișează butonul de autentificare
           authButton.style.display = "block";
           profileButton.style.display = "none";
         }

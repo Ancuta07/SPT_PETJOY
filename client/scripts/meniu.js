@@ -34,7 +34,7 @@ function loadUserData() {
 }
 
 // Schimbă secțiunea activă
-function showSection(sectionId) {
+function showSection(sectionId, event) {
   // Ascunde toate secțiunile
   const sections = document.querySelectorAll(".section");
   sections.forEach((section) => {
@@ -65,7 +65,7 @@ function logout() {
   }
 }
 
-// Încarcă comenzile utilizatorului (simulare - în realitate ar veni de la server)
+// Încarcă comenzile utilizatorului (din backend)
 async function loadUserOrders() {
   const user = sessionStorage.getItem("petjoy_user");
   if (!user) return;
@@ -73,19 +73,31 @@ async function loadUserOrders() {
   const userData = JSON.parse(user);
 
   try {
-    // Aici ar fi cererea către server
-    // const response = await fetch(`http://localhost:8000/api/comenzi/${userData.id}`);
-    // const orders = await response.json();
-    // Pentru moment, folosim date simulate
-    // Dacă nu sunt comenzi, afișează mesajul corespunzător
-    // const orderCards = document.querySelectorAll('.order-card');
-    // if (orderCards.length === 0) {
-    //   document.querySelector('#comenzi .empty-state').style.display = 'block';
-    // }
+    const response = await fetch(
+      `http://localhost:8000/api/orders/user/${encodeURIComponent(userData.email)}`
+    );
+
+    if (!response.ok) {
+      throw new Error("Eroare la încărcarea comenzilor: " + response.status);
+    }
+
+    const orders = await response.json();
+    displayOrders(orders);
   } catch (error) {
     console.error("Eroare la încărcarea comenzilor:", error);
+
+    const ordersGrid = document.querySelector("#comenzi .cards-grid");
+    if (ordersGrid) {
+      ordersGrid.innerHTML = `
+        <div class="empty-state" style="display: block;">
+          <p>⚠️ Eroare la încărcarea comenzilor (backend indisponibil)</p>
+        </div>
+      `;
+    }
   }
 }
+
+
 
 // Încarcă programările utilizatorului
 async function loadUserAppointments() {
@@ -123,6 +135,98 @@ async function loadUserAppointments() {
     }
   }
 }
+
+// Afișează comenzile în interfață
+function displayOrders(orders) {
+  const ordersGrid = document.querySelector("#comenzi .cards-grid");
+  if (!ordersGrid) return;
+
+  ordersGrid.innerHTML = "";
+
+  if (!orders || orders.length === 0) {
+    ordersGrid.innerHTML = `
+      <div class="empty-state" style="display: block;">
+        <p>Nu aveți comenzi înregistrate</p>
+      </div>
+    `;
+    return;
+  }
+
+  orders.forEach((order) => {
+    const card = createOrderCard(order);
+    ordersGrid.appendChild(card);
+  });
+}
+
+// Creează card pentru o comandă
+function createOrderCard(order) {
+  const card = document.createElement("div");
+  card.className = "order-card";
+
+  const status = order.status || order.stare || "NECUNOSCUT";
+  const total = order.total ?? order.pretTotal ?? 0;
+
+  // items poate veni sub mai multe forme în funcție de backend
+  const items = Array.isArray(order.items) ? order.items : (Array.isArray(order.produse) ? order.produse : []);
+
+  const itemsHtml = items.length
+    ? `<ul class="order-items">
+        ${items
+          .map((it) => {
+            const name =
+              it.productName ||
+              it.numeProdus ||
+              (it.product && (it.product.nume || it.product.name)) ||
+              "Produs";
+
+            const qty = it.quantity ?? it.cantitate ?? it.qty ?? 1;
+            return `<li>${name} — ${qty}x</li>`;
+          })
+          .join("")}
+      </ul>`
+    : `<p style="opacity:0.8">Produse indisponibile în răspuns (backend)</p>`;
+
+  card.innerHTML = `
+    <h3>Comanda #${order.id}</h3>
+    <p><strong>Status:</strong> ${status}</p>
+    <p><strong>Total:</strong> ${total} lei</p>
+    ${itemsHtml}
+    <div class="order-actions" style="margin-top:12px;">
+      <button class="btn-danger" onclick="deleteOrder(${order.id})">Șterge</button>
+    </div>
+  `;
+
+  return card;
+}
+
+// Șterge o comandă (backend)
+async function deleteOrder(orderId) {
+  if (!confirm("Sigur doriți să ștergeți această comandă?")) return;
+
+  const userStr = sessionStorage.getItem("petjoy_user");
+  if (!userStr) return;
+  const userData = JSON.parse(userStr);
+
+  try {
+    // Endpoint propus: DELETE /api/orders/{id}?email={userEmail}
+    const response = await fetch(
+      `http://localhost:8000/api/orders/${orderId}?email=${encodeURIComponent(userData.email)}`,
+      { method: "DELETE" }
+    );
+
+    if (!response.ok) {
+      const txt = await response.text();
+      throw new Error(txt || "Eroare la ștergere");
+    }
+
+    alert("✅ Comanda a fost ștearsă!");
+    loadUserOrders();
+  } catch (error) {
+    console.error("Eroare la ștergerea comenzii:", error);
+    alert("❌ Nu am putut șterge comanda. Verifică backend-ul/endpoint-ul.");
+  }
+}
+
 
 // Afișează programările în interfață
 function displayAppointments(appointments) {

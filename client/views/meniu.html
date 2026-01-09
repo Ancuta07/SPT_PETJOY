@@ -13,7 +13,7 @@
     />
   </head>
   <body>
-    <!-- HEADER SIMPLIFICAT -->
+    <!-- HEADER  -->
     <header class="header">
       <nav>
         <div class="logo">
@@ -50,7 +50,7 @@
         </div>
 
         <nav class="menu-nav">
-          <button class="menu-btn active" onclick="showSection('comenzi')">
+          <button class="menu-btn active" onclick="showSection('comenzi', event)">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="20"
@@ -69,7 +69,7 @@
             Comenzile Mele
           </button>
 
-          <button class="menu-btn" onclick="showSection('programari')">
+          <button class="menu-btn" onclick="showSection('programari', event)">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="20"
@@ -87,7 +87,7 @@
             Programările Mele
           </button>
 
-          <button class="menu-btn" onclick="showSection('locatii')">
+          <button class="menu-btn" onclick="showSection('locatii', event)">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="20"
@@ -102,7 +102,17 @@
             </svg>
             Locații în Apropiere
           </button>
-          
+
+          <!-- Buton ADMIN (ascuns implicit, meniu.js îl afișează doar dacă rolul e ADMIN) -->
+          <button
+            class="menu-btn"
+            id="adminBtn"
+            style="display: none"
+            onclick="window.location.href='admin.html'"
+            title="Panou administrator"
+          >
+            🛠️ Admin
+          </button>
 
           <button class="menu-btn logout" onclick="logout()">
             <svg
@@ -128,38 +138,9 @@
         <!-- COMENZI -->
         <section id="comenzi" class="section active">
           <h1>Comenzile Mele</h1>
-          <div class="cards-grid">
-            <div class="order-card">
-              <div class="order-header">
-                <span class="order-number">#12345</span>
-                <span class="status status-pending">În procesare</span>
-              </div>
-              <div class="order-body">
-                <p class="order-date">Data: 15 Decembrie 2024</p>
-                <p class="order-total">Total: 250 LEI</p>
-                <ul class="order-items">
-                  <li>Hrană premium pentru câini - 2x</li>
-                  <li>Jucărie interactivă pisici</li>
-                </ul>
-              </div>
-              <button class="btn-details">Detalii comandă</button>
-            </div>
 
-            <div class="order-card">
-              <div class="order-header">
-                <span class="order-number">#12344</span>
-                <span class="status status-completed">Livrată</span>
-              </div>
-              <div class="order-body">
-                <p class="order-date">Data: 10 Decembrie 2024</p>
-                <p class="order-total">Total: 180 LEI</p>
-                <ul class="order-items">
-                  <li>Lesă pentru plimbări</li>
-                  <li>Recipient apă</li>
-                </ul>
-              </div>
-              <button class="btn-details">Detalii comandă</button>
-            </div>
+          <div class="cards-grid">
+            <!-- Comenzile vor fi încărcate dinamic din backend prin meniu.js -->
 
             <div class="empty-state" style="display: none">
               <svg
