@@ -74,6 +74,10 @@ public class OrderService {
         return orderRepo.findByEmailOrderByCreatedAtDesc(email);
     }
 
+    public List<Order> getAllOrders() {
+        return orderRepo.findAll();
+    }
+
     public void deleteOrder(Long id, String email) {
         Order o = orderRepo.findById(id).orElseThrow(() -> new RuntimeException("Comanda nu există"));
         if (!o.getEmail().equals(email)) throw new RuntimeException("Nu ai acces la comanda asta");

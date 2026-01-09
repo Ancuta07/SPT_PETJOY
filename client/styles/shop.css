@@ -21,7 +21,7 @@ body{background:var(--bg);color:#0b1220;display:flex;justify-content:center;flex
 
 body {
   background-image: linear-gradient(rgba(4, 9, 30, 0.7), rgba(4, 9, 30, 0.7)),
-    url(images/shop.jpeg);
+    url("../images/shop.jpeg");
   background-position: center;
   background-size: cover;
   font-family: sans-serif;

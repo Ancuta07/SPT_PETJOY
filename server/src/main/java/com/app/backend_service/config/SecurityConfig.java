@@ -42,6 +42,9 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/api/auth/**").permitAll()
                 .requestMatchers("/api/appointments/**").permitAll() // permite programările
+                .requestMatchers("/api/products/**").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/orders").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/orders/**").permitAll()
                 .anyRequest().authenticated()
             );
 
