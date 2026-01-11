@@ -33,12 +33,10 @@ services:
         condition: service_healthy
 
   frontend:
-    image: nginx:alpine
+    build: ./client
     container_name: petjoy_frontend
     ports:
       - "5500:80"
-    volumes:
-      - ./client:/usr/share/nginx/html
 
 volumes:
   db_data:
