@@ -77,7 +77,7 @@ document.addEventListener("DOMContentLoaded", () => {
 // ================== LOAD LOCATIONS ==================
 async function loadLocations() {
   try {
-    const response = await fetch("http://localhost:8000/api/locations");
+    const response = await fetch("/api/locations");
     if (!response.ok) throw new Error("Eroare la încărcarea locațiilor");
 
     const locations = await response.json();

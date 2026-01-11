@@ -199,7 +199,7 @@
        */
       async function loadProducts() {
         try {
-          const res = await fetch("http://localhost:8000/api/products");
+          const res = await fetch("/api/products");
           if (!res.ok) throw new Error("Backend error: " + res.status);
 
           const data = await res.json();
@@ -388,7 +388,7 @@
           };
 
           try {
-            const res = await fetch("http://localhost:8000/api/orders", {
+            const res = await fetch("/api/orders", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify(payload),

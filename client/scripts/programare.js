@@ -210,7 +210,7 @@ document.addEventListener("DOMContentLoaded", function () {
       try {
         // Verifică disponibilitatea înainte de a crea programarea
         const checkResponse = await fetch(
-          `http://localhost:8000/api/appointments/check-availability?clinica=${encodeURIComponent(
+          `/api/appointments/check-availability?clinica=${encodeURIComponent(
             clinica
           )}&dataOra=${encodeURIComponent(dataOra)}`
         );
@@ -236,7 +236,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         // Dacă e disponibil, creează programarea
-        const response = await fetch("http://localhost:8000/api/appointments", {
+        const response = await fetch("/api/appointments", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(appointmentData),
@@ -289,9 +289,7 @@ let allClinics = [];
 // Funcție pentru încărcarea orașelor și clinicilor din baza de date
 async function loadClinics() {
   try {
-    const response = await fetch(
-      "http://localhost:8000/api/locations?tip=CLINICA"
-    );
+    const response = await fetch("/api/locations?tip=CLINICA");
     if (!response.ok) throw new Error("Eroare la încărcarea clinicilor");
 
     allClinics = await response.json();

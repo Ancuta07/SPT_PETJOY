@@ -75,9 +75,7 @@ async function loadUserOrders() {
 
   try {
     const response = await fetch(
-      `http://localhost:8000/api/orders/user/${encodeURIComponent(
-        userData.email
-      )}`
+      `/api/orders/user/${encodeURIComponent(userData.email)}`
     );
 
     if (!response.ok) {
@@ -110,9 +108,7 @@ async function loadUserAppointments() {
   try {
     // Cerere către server pentru a obține programările utilizatorului
     const response = await fetch(
-      `http://localhost:8000/api/appointments/user/${encodeURIComponent(
-        userData.email
-      )}`
+      `/api/appointments/user/${encodeURIComponent(userData.email)}`
     );
 
     if (!response.ok) {
@@ -218,10 +214,9 @@ async function deleteOrder(orderId) {
   if (!confirm("Sigur doriți să ștergeți această comandă?")) return;
 
   try {
-    const response = await fetch(
-      `http://localhost:8000/api/orders/${orderId}`,
-      { method: "DELETE" }
-    );
+    const response = await fetch(`/api/orders/${orderId}`, {
+      method: "DELETE",
+    });
 
     if (!response.ok) {
       throw new Error("Eroare la ștergere");
@@ -335,12 +330,9 @@ async function cancelAppointment(appointmentId) {
   }
 
   try {
-    const response = await fetch(
-      `http://localhost:8000/api/appointments/${appointmentId}`,
-      {
-        method: "DELETE",
-      }
-    );
+    const response = await fetch(`/api/appointments/${appointmentId}`, {
+      method: "DELETE",
+    });
 
     if (!response.ok) {
       throw new Error("Eroare la anularea programării");
@@ -374,7 +366,7 @@ async function loadLocations() {
 
   try {
     // Încarcă toate locațiile din baza de date
-    const response = await fetch("http://localhost:8000/api/locations");
+    const response = await fetch("/api/locations");
     if (!response.ok) throw new Error("Eroare la încărcarea locațiilor");
 
     const locations = await response.json();

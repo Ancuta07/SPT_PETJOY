@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const API_BASE = "http://localhost:8000";
+  const API_BASE = "";
   const content = document.getElementById("content");
 
   async function fetchJson(path, options) {
@@ -22,14 +22,20 @@ document.addEventListener("DOMContentLoaded", () => {
     content.innerHTML = `
       <h2>${title}</h2>
       <table>
-        <thead><tr>${cols.map(c => `<th>${c}</th>`).join("")}${options.extraHeader || ""}</tr></thead>
+        <thead><tr>${cols.map((c) => `<th>${c}</th>`).join("")}${
+      options.extraHeader || ""
+    }</tr></thead>
         <tbody>
-          ${rows.map(r => `
+          ${rows
+            .map(
+              (r) => `
             <tr>
-              ${cols.map(c => `<td>${r[c] ?? ""}</td>`).join("")}
+              ${cols.map((c) => `<td>${r[c] ?? ""}</td>`).join("")}
               ${options.rowExtra ? options.rowExtra(r) : ""}
             </tr>
-          `).join("")}
+          `
+            )
+            .join("")}
         </tbody>
       </table>
     `;
@@ -46,38 +52,13 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       if (tab === "users") {
-        // endpoint recomandat: /api/admin/users
-        const users = await fetchJson("/api/admin/users");
+        const users = await fetchJson("/api/auth/users");
 
         renderTable("Users", users, {
-          extraHeader: "<th>Rol (schimbă)</th>",
+          extraHeader: "<th>Rol</th>",
           rowExtra: (u) => `
-            <td>
-              <select data-user-id="${u.id}" class="roleSelect">
-                <option value="CLIENT" ${u.rol === "CLIENT" ? "selected" : ""}>CLIENT</option>
-                <option value="ADMIN" ${u.rol === "ADMIN" ? "selected" : ""}>ADMIN</option>
-              </select>
-            </td>
+            <td>${u.rol || "CLIENT"}</td>
           `,
-        });
-
-        // bind schimbare rol
-        document.querySelectorAll(".roleSelect").forEach((sel) => {
-          sel.addEventListener("change", async (e) => {
-            const userId = e.target.dataset.userId;
-            const newRole = e.target.value;
-
-            try {
-              await fetchJson(`/api/admin/users/${userId}/role`, {
-                method: "PUT",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ rol: newRole }),
-              });
-              alert("Rol actualizat!");
-            } catch (err) {
-              alert("Nu pot schimba rolul: " + err.message);
-            }
-          });
         });
 
         return;
