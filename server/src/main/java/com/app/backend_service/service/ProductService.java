@@ -8,22 +8,55 @@ import java.util.List;
 
 @Service
 public class ProductService {
-    private final ProductRepository repo;
 
-    public ProductService(ProductRepository repo) {
-        this.repo = repo;
+    private final ProductRepository repository;
+
+    public ProductService(ProductRepository repository) {
+        this.repository = repository;
     }
 
     public List<Product> getAll() {
-        return repo.findAll();
+        return repository.findAll();
     }
 
     public List<Product> getByCategorie(String categorie) {
-        return repo.findByCategorie(categorie);
+        return repository.findByCategorie(categorie);
     }
 
-    public Product create(Product p) {
-        if (p.getStoc() == null) p.setStoc(0);
-        return repo.save(p);
+    public Product create(Product product) {
+        if (product.getStoc() == null) {
+            product.setStoc(0);
+        }
+        return repository.save(product);
+    }
+
+    public Product update(Product product) {
+        Product existing = repository.findById(product.getId())
+            .orElseThrow(() -> new RuntimeException("Produs nu există"));
+        
+        if (product.getStoc() != null) {
+            existing.setStoc(product.getStoc());
+        }
+        if (product.getNume() != null) {
+            existing.setNume(product.getNume());
+        }
+        if (product.getPret() != null) {
+            existing.setPret(product.getPret());
+        }
+        if (product.getCategorie() != null) {
+            existing.setCategorie(product.getCategorie());
+        }
+        if (product.getDescriere() != null) {
+            existing.setDescriere(product.getDescriere());
+        }
+        if (product.getImageUrl() != null) {
+            existing.setImageUrl(product.getImageUrl());
+        }
+        
+        return repository.save(existing);
+    }
+
+    public void delete(Long id) {
+        repository.deleteById(id);
     }
 }

@@ -5,39 +5,54 @@ import com.app.backend_service.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/auth")
-@CrossOrigin(origins = "http://localhost:5500") // portul frontend
+@CrossOrigin(origins = "http://localhost:5500")
 public class UserController {
 
-    private final UserService userService;
+    private final UserService service;
 
-    public UserController(UserService userService) {
-        this.userService = userService;
+    public UserController(UserService service) {
+        this.service = service;
+    }
+
+    @GetMapping("/users")
+    public ResponseEntity<List<User>> getAll() {
+        return ResponseEntity.ok(service.getAll());
     }
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody User user) {
-        if(user.getRol() == null){
+        if (service.getByEmail(user.getEmail()).isPresent()) {
+            return ResponseEntity.status(400).body("Email-ul este deja înregistrat");
+        }
+        
+        if (user.getRol() == null) {
             user.setRol(User.Role.CLIENT);
         }
-        User newUser = userService.register(user);
+        User newUser = service.create(user);
         return ResponseEntity.ok(newUser);
     }
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest request) {
-        Optional<User> userOpt = userService.login(request.getEmail(), request.getParola());
-        if(userOpt.isPresent()) {
+        Optional<User> userOpt = service.login(request.getEmail(), request.getParola());
+        if (userOpt.isPresent()) {
             return ResponseEntity.ok(userOpt.get());
         } else {
             return ResponseEntity.status(401).body("Email sau parola gresita");
         }
     }
 
-    // DTO pentru login
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> delete(@PathVariable Long id) {
+        service.delete(id);
+        return ResponseEntity.ok().build();
+    }
+
     public static class LoginRequest {
         private String email;
         private String parola;

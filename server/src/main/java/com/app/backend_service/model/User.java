@@ -1,5 +1,6 @@
 package com.app.backend_service.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -21,6 +22,7 @@ public class User {
     @Column(nullable = false, unique = true)
     private String email; // folosit la login
 
+    @JsonIgnore
     @Column(nullable = false)
     private String parola; // criptata
 

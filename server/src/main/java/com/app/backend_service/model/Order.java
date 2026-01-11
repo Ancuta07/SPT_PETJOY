@@ -2,11 +2,9 @@ package com.app.backend_service.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 @Table(name = "orders")
@@ -20,23 +18,29 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable=false)
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "user_id", nullable = false)
+    @JsonIgnoreProperties({"parola", "appointments", "orders"})
+    private User user;
+
+    @Column(nullable = false)
     private String email;
 
-    @Column(nullable=false)
+    @Column(nullable = false, columnDefinition = "TEXT")
+    private String produse; // JSON string cu produsele: [{"productId": 1, "productName": "X", "quantity": 2, "priceAtOrder": 45.0}]
+
+    @Column(nullable = false)
+    private String adresaLivrare;
+
+    @Column(nullable = false)
     private Double total;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable=false)
+    @Column(nullable = false)
     private Status status;
 
-    @Column(nullable=false)
+    @Column(nullable = false)
     private LocalDateTime createdAt;
-
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
-    @Builder.Default
-    @JsonManagedReference
-    private List<OrderItem> items = new ArrayList<>();
 
     @PrePersist
     void onCreate() {

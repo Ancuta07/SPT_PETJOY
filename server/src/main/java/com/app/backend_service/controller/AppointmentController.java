@@ -12,37 +12,30 @@ import java.util.List;
 @CrossOrigin(origins = {"http://localhost:5500"})
 public class AppointmentController {
 
-    private final AppointmentService appointmentService;
+    private final AppointmentService service;
 
-    public AppointmentController(AppointmentService appointmentService) {
-        this.appointmentService = appointmentService;
+    public AppointmentController(AppointmentService service) {
+        this.service = service;
     }
 
-    // Creează o programare nouă
-    @PostMapping
-    public ResponseEntity<Appointment> createAppointment(@RequestBody Appointment appointment) {
-        Appointment newAppointment = appointmentService.createAppointment(appointment);
-        return ResponseEntity.ok(newAppointment);
-    }
-
-    // Obține toate programările
     @GetMapping
-    public ResponseEntity<List<Appointment>> getAllAppointments() {
-        List<Appointment> appointments = appointmentService.getAllAppointments();
-        return ResponseEntity.ok(appointments);
+    public ResponseEntity<List<Appointment>> getAll() {
+        return ResponseEntity.ok(service.getAll());
     }
 
-    // Obține programările pentru un email specific
     @GetMapping("/user/{email}")
-    public ResponseEntity<List<Appointment>> getAppointmentsByEmail(@PathVariable String email) {
-        List<Appointment> appointments = appointmentService.getAppointmentsByEmail(email);
-        return ResponseEntity.ok(appointments);
+    public ResponseEntity<List<Appointment>> getByEmail(@PathVariable String email) {
+        return ResponseEntity.ok(service.getByEmail(email));
     }
 
-    // Șterge o programare
+    @PostMapping
+    public ResponseEntity<Appointment> create(@RequestBody Appointment appointment) {
+        return ResponseEntity.ok(service.create(appointment));
+    }
+
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteAppointment(@PathVariable Long id) {
-        appointmentService.deleteAppointment(id);
+    public ResponseEntity<?> delete(@PathVariable Long id) {
+        service.delete(id);
         return ResponseEntity.ok().build();
     }
 }

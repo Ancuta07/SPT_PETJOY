@@ -166,21 +166,29 @@ function createOrderCard(order) {
   const status = order.status || order.stare || "NECUNOSCUT";
   const total = order.total ?? order.pretTotal ?? 0;
 
-  // items poate veni sub mai multe forme în funcție de backend
-  const items = Array.isArray(order.items) ? order.items : (Array.isArray(order.produse) ? order.produse : []);
+  // Parse produse JSON string
+  let items = [];
+  try {
+    if (typeof order.produse === 'string') {
+      items = JSON.parse(order.produse);
+    } else if (Array.isArray(order.produse)) {
+      items = order.produse;
+    } else if (Array.isArray(order.items)) {
+      items = order.items;
+    }
+  } catch (e) {
+    console.error('Eroare la parsarea produselor:', e);
+    items = [];
+  }
 
   const itemsHtml = items.length
     ? `<ul class="order-items">
         ${items
           .map((it) => {
-            const name =
-              it.productName ||
-              it.numeProdus ||
-              (it.product && (it.product.nume || it.product.name)) ||
-              "Produs";
-
+            const name = it.productName || it.numeProdus || "Produs";
             const qty = it.quantity ?? it.cantitate ?? it.qty ?? 1;
-            return `<li>${name} — ${qty}x</li>`;
+            const price = it.priceAtOrder ?? it.pret ?? 0;
+            return `<li>${name} — ${qty}x (${price} RON)</li>`;
           })
           .join("")}
       </ul>`

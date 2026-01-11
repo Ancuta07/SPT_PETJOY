@@ -27,7 +27,7 @@
         try {
           const u = JSON.parse(currentUserStr);
           const rol = (u.rol || "").toUpperCase();
-          window.location.href = rol === "ADMIN" ? "index.html" : "index.html";
+          window.location.href = rol === "ADMIN" ? "admin.html" : "index.html";
         } catch {
           sessionStorage.removeItem("petjoy_user");
         }
@@ -67,8 +67,9 @@
           message.textContent = `Bine ai venit, ${user.nume}! Redirecționare...`;
 
           setTimeout(() => {
-            // întotdeauna redirecționează la pagina principală
-            window.location.href = "index.html";
+            // redirecționează după rol
+            window.location.href =
+              rol === "ADMIN" ? "admin.html" : "index.html";
           }, 600);
         } catch (err) {
           console.error(err);

@@ -1,5 +1,6 @@
 package com.app.backend_service.controller;
 
+import com.app.backend_service.dto.OrderRequest;
 import com.app.backend_service.model.Order;
 import com.app.backend_service.service.OrderService;
 import org.springframework.http.ResponseEntity;
@@ -18,24 +19,29 @@ public class OrderController {
         this.service = service;
     }
 
-    @PostMapping
-    public ResponseEntity<Order> create(@RequestBody OrderService.CreateOrderRequest req) {
-        return ResponseEntity.ok(service.createOrder(req));
-    }
-
     @GetMapping
     public ResponseEntity<List<Order>> getAll() {
-        return ResponseEntity.ok(service.getAllOrders());
+        return ResponseEntity.ok(service.getAll());
     }
 
     @GetMapping("/user/{email}")
-    public ResponseEntity<List<Order>> getByUser(@PathVariable String email) {
-        return ResponseEntity.ok(service.getOrdersForUser(email));
+    public ResponseEntity<List<Order>> getByEmail(@PathVariable String email) {
+        return ResponseEntity.ok(service.getByEmail(email));
+    }
+
+    @PostMapping
+    public ResponseEntity<?> create(@RequestBody OrderRequest request) {
+        try {
+            Order order = service.createOrder(request);
+            return ResponseEntity.ok(order);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> delete(@PathVariable Long id, @RequestParam String email) {
-        service.deleteOrder(id, email);
+    public ResponseEntity<?> delete(@PathVariable Long id) {
+        service.delete(id);
         return ResponseEntity.ok().build();
     }
 }

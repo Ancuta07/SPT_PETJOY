@@ -1,41 +1,462 @@
 <!DOCTYPE html>
 <html lang="ro">
-<head>
-  <meta charset="UTF-8" />
-  <title>Admin - PetJoy</title>
-  <link rel="stylesheet" href="../styles/admin.css" />
-</head>
-<body>
-  <header style="display:flex;align-items:center;justify-content:space-between;gap:12px;">
-    <h1>Admin Dashboard</h1>
-    <a href="index.html" class="btn-home" title="Back">back</a>
-  </header>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin - PetJoy</title>
+    <link rel="stylesheet" href="../styles/admin.css" />
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>Admin Dashboard</h1>
+        <div class="header-buttons">
+          <a href="index.html" class="btn-home">← Înapoi</a>
+          <button class="btn-logout" onclick="logout()">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+              <polyline points="16 17 21 12 16 7" />
+              <line x1="21" y1="12" x2="9" y2="12" />
+            </svg>
+          </button>
+        </div>
+      </header>
 
-  <div class="tabs">
-    <button data-tab="users">Users</button>
-    <button data-tab="appointments">Appointments</button>
-    <button data-tab="products">Products</button>
-    <button data-tab="orders">Orders</button>
-  </div>
+      <!-- Modal pentru adăugare produs -->
+      <div id="addProductModal" class="modal-overlay">
+        <div class="modal-content">
+          <h2>Adaugă Produs Nou</h2>
+          <form id="addProductForm" onsubmit="addProduct(event)">
+            <div class="form-group">
+              <label>Nume:</label>
+              <input
+                type="text"
+                id="newProductNume"
+                required
+                class="form-input"
+              />
+            </div>
+            <div class="form-group">
+              <label>Categorie:</label>
+              <input
+                type="text"
+                id="newProductCategorie"
+                required
+                class="form-input"
+              />
+            </div>
+            <div class="form-group">
+              <label>Preț (RON):</label>
+              <input
+                type="number"
+                id="newProductPret"
+                required
+                step="0.01"
+                min="0"
+                class="form-input"
+              />
+            </div>
+            <div class="form-group">
+              <label>Stoc:</label>
+              <input
+                type="number"
+                id="newProductStoc"
+                required
+                min="0"
+                class="form-input"
+              />
+            </div>
+            <div class="form-group">
+              <label>URL Imagine:</label>
+              <input
+                type="text"
+                id="newProductImage"
+                required
+                class="form-input"
+              />
+            </div>
+            <div class="form-group">
+              <label>Descriere:</label>
+              <textarea
+                id="newProductDescriere"
+                required
+                class="form-textarea"
+              ></textarea>
+            </div>
+            <div class="form-actions">
+              <button
+                type="button"
+                onclick="hideAddProductForm()"
+                class="btn-cancel"
+              >
+                Anulează
+              </button>
+              <button type="submit" class="btn-submit">Adaugă</button>
+            </div>
+          </form>
+        </div>
+      </div>
 
-  <div id="content">Selectează un tab.</div>
+      <div class="tabs">
+        <button data-tab="users" class="active">👤 Users</button>
+        <button data-tab="appointments">📅 Appointments</button>
+        <button data-tab="products">🛍️ Products</button>
+        <button data-tab="orders">📦 Orders</button>
+        <button data-tab="locations">📍 Locations</button>
+      </div>
 
-  <script>
-    const userStr = sessionStorage.getItem("petjoy_user");
-    if (!userStr) window.location.href = "autentificare.html";
-    else {
-      try {
-        const u = JSON.parse(userStr);
-        if ((u.rol || "").toUpperCase() !== "ADMIN") {
-          window.location.href = "meniu.html";
-        }
-      } catch {
-        sessionStorage.removeItem("petjoy_user");
+      <div id="content">
+        <div class="loading">Se încarcă datele</div>
+      </div>
+    </div>
+
+    <script>
+      // Check admin authentication
+      const userStr = sessionStorage.getItem("petjoy_user");
+      if (!userStr) {
         window.location.href = "autentificare.html";
+      } else {
+        try {
+          const u = JSON.parse(userStr);
+          if ((u.rol || "").toUpperCase() !== "ADMIN") {
+            window.location.href = "meniu.html";
+          }
+        } catch {
+          sessionStorage.removeItem("petjoy_user");
+          window.location.href = "autentificare.html";
+        }
       }
-    }
-  </script>
 
-  <script src="../scripts/admin.js"></script>
-</body>
+      const API_BASE = "http://localhost:8000/api";
+
+      // Fetch data from database
+      async function fetchData(tabName) {
+        const endpoints = {
+          users: `${API_BASE}/auth/users`,
+          appointments: `${API_BASE}/appointments`,
+          products: `${API_BASE}/products`,
+          orders: `${API_BASE}/orders`,
+          locations: `${API_BASE}/locations`,
+        };
+
+        if (!endpoints[tabName]) {
+          return [];
+        }
+
+        try {
+          const response = await fetch(endpoints[tabName]);
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          return await response.json();
+        } catch (error) {
+          console.error(`Error fetching ${tabName}:`, error);
+          return [];
+        }
+      }
+
+      // Format data for display
+      function formatDataForTable(tabName, data) {
+        if (tabName === "users") {
+          return data.map((u) => ({
+            id: u.id,
+            nume: u.nume,
+            email: u.email,
+            rol: u.rol,
+            _raw: u,
+          }));
+        } else if (tabName === "appointments") {
+          return data.map((a) => ({
+            id: a.id,
+            nume: `${a.nume} ${a.prenume}`,
+            email: a.email,
+            telefon: a.telefon,
+            clinica: a.clinica,
+            data: new Date(a.dataOra).toLocaleString("ro-RO"),
+            _raw: a,
+          }));
+        } else if (tabName === "products") {
+          return data.map((p) => ({
+            id: p.id,
+            nume: p.nume,
+            categorie: p.categorie,
+            pret: p.pret,
+            stoc: p.stoc,
+            _raw: p,
+          }));
+        } else if (tabName === "orders") {
+          return data.map((o) => {
+            const user = o.user || {};
+
+            // Parse produse JSON string
+            let produseText = "N/A";
+            try {
+              const items = JSON.parse(o.produse || "[]");
+              produseText = items
+                .map(
+                  (item) => `${item.productName || "N/A"} (x${item.quantity})`
+                )
+                .join(", ");
+            } catch (e) {
+              produseText = o.produse || "N/A";
+            }
+
+            return {
+              id: o.id,
+              utilizator: user.nume || user.email || "N/A",
+              email: user.email || "N/A",
+              produse: produseText,
+              adresa: o.adresaLivrare || "N/A",
+              total: o.total,
+              status: o.status,
+              data: new Date(o.createdAt).toLocaleString("ro-RO"),
+              _raw: o,
+            };
+          });
+        } else if (tabName === "locations") {
+          return data.map((l) => ({
+            id: l.id,
+            tip: l.tip,
+            oras: l.oras,
+            adresa: l.adresa,
+            telefon: l.telefon,
+            program: l.program,
+            _raw: l,
+          }));
+        }
+        return data;
+      }
+
+      // Delete functions
+      async function deleteItem(tabName, id) {
+        if (!confirm("Sigur vrei să ștergi acest element?")) {
+          return;
+        }
+
+        const endpoints = {
+          users: `${API_BASE}/auth/${id}`,
+          appointments: `${API_BASE}/appointments/${id}`,
+          products: `${API_BASE}/products/${id}`,
+          orders: `${API_BASE}/orders/${id}`,
+          locations: `${API_BASE}/locations/${id}`,
+        };
+
+        try {
+          const response = await fetch(endpoints[tabName], {
+            method: "DELETE",
+          });
+
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+
+          alert("Element șters cu succes!");
+          renderTable(tabName);
+        } catch (error) {
+          console.error(`Error deleting ${tabName}:`, error);
+          alert("Eroare la ștergere!");
+        }
+      }
+
+      // Update product function (stock and price)
+      async function updateProduct(productId, field, value) {
+        try {
+          const body = {};
+          body[field] = field === "pret" ? parseFloat(value) : parseInt(value);
+
+          const response = await fetch(`${API_BASE}/products/${productId}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(body),
+          });
+
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+
+          alert(
+            field === "stoc"
+              ? "Stoc actualizat cu succes!"
+              : "Preț actualizat cu succes!"
+          );
+          renderTable("products");
+        } catch (error) {
+          console.error(`Error updating ${field}:`, error);
+          alert(
+            `Eroare la actualizarea ${
+              field === "stoc" ? "stocului" : "prețului"
+            }!`
+          );
+        }
+      }
+
+      // Modal functions
+      function showAddProductForm() {
+        document.getElementById("addProductModal").style.display = "block";
+      }
+
+      function hideAddProductForm() {
+        document.getElementById("addProductModal").style.display = "none";
+        document.getElementById("addProductForm").reset();
+      }
+
+      // Add product function
+      async function addProduct(event) {
+        event.preventDefault();
+
+        const newProduct = {
+          nume: document.getElementById("newProductNume").value,
+          categorie: document.getElementById("newProductCategorie").value,
+          pret: parseFloat(document.getElementById("newProductPret").value),
+          stoc: parseInt(document.getElementById("newProductStoc").value),
+          imageUrl: document.getElementById("newProductImage").value,
+          descriere: document.getElementById("newProductDescriere").value,
+        };
+
+        try {
+          const response = await fetch(`${API_BASE}/products`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(newProduct),
+          });
+
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+
+          alert("Produs adăugat cu succes!");
+          hideAddProductForm();
+          renderTable("products");
+        } catch (error) {
+          console.error("Error adding product:", error);
+          alert("Eroare la adăugarea produsului!");
+        }
+      }
+
+      async function renderTable(tabName) {
+        const content = document.getElementById("content");
+        content.innerHTML = '<div class="loading">Se încarcă datele...</div>';
+
+        const rawData = await fetchData(tabName);
+        const data = formatDataForTable(tabName, rawData);
+
+        if (!data || data.length === 0) {
+          content.innerHTML =
+            '<div class="empty-state">Nu există date disponibile</div>';
+          return;
+        }
+
+        const columns = Object.keys(data[0]).filter((col) => col !== "_raw");
+
+        let html = '<div class="table-container"><table><thead><tr>';
+        columns.forEach((col) => {
+          html += `<th>${col.toUpperCase()}</th>`;
+        });
+
+        // Add button in header for products tab
+        if (tabName === "products") {
+          html += `<th class="text-right">
+            <button onclick="showAddProductForm()" 
+                    class="btn-add-product"
+                    title="Adaugă produs nou">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-plus-icon lucide-plus"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+            </button>
+          </th>`;
+        } else {
+          html += "<th>ACȚIUNI</th>";
+        }
+
+        html += "</tr></thead><tbody>";
+
+        data.forEach((row) => {
+          html += "<tr>";
+          columns.forEach((col) => {
+            let value = row[col];
+
+            // Add badges for specific fields
+            if (col === "rol") {
+              const rolClass = value === "ADMIN" ? "admin" : "client";
+              value = `<span class="badge badge-${rolClass}">${value}</span>`;
+            } else if (col === "status") {
+              value = `<span class="badge badge-${value.toLowerCase()}">${value}</span>`;
+            } else if (col === "tip") {
+              const tipClass = value.toLowerCase().replace("_", "-");
+              value = `<span class="badge badge-${tipClass}">${value}</span>`;
+            } else if (col === "pret" && tabName === "products") {
+              const pretValue = value;
+              value = `
+                <div class="inline-edit-container">
+                  <span>${pretValue} RON</span>
+                  <input type="number" id="price-${row.id}" value="${pretValue}" 
+                         class="inline-input-price" min="0" step="0.01" />
+                  <button onclick="updateProduct(${row.id}, 'pret', document.getElementById('price-${row.id}').value)" 
+                          class="btn-save-inline" title="Salvează preț">
+                    💾
+                  </button>
+                </div>
+              `;
+            } else if (col === "pret" || col === "total") {
+              value = `${value} RON`;
+            } else if (col === "stoc" && tabName === "products") {
+              const stockValue = value;
+              const stockClass = stockValue <= 0 ? "stock-zero" : "";
+              value = `
+                <div class="inline-edit-container">
+                  <span class="${stockClass}">${stockValue}</span>
+                  <input type="number" id="stock-${row.id}" value="${stockValue}" 
+                         class="inline-input-stock" min="0" />
+                  <button onclick="updateProduct(${row.id}, 'stoc', document.getElementById('stock-${row.id}').value)" 
+                          class="btn-save-inline" title="Salvează stoc">
+                    💾
+                  </button>
+                </div>
+              `;
+            } else if (col === "stoc") {
+              if (value <= 0) {
+                value = `<span class="stock-zero">${value}</span>`;
+              }
+            }
+
+            html += `<td>${value}</td>`;
+          });
+
+          // Actions column
+          html += `<td>
+            <button onclick="deleteItem('${tabName}', ${row.id})" 
+                    class="btn-delete">
+              🗑️ 
+            </button>
+          </td>`;
+
+          html += "</tr>";
+        });
+
+        html += "</tbody></table></div>";
+        content.innerHTML = html;
+      }
+
+      // Tab switching
+      const tabs = document.querySelectorAll(".tabs button");
+      tabs.forEach((tab) => {
+        tab.addEventListener("click", () => {
+          tabs.forEach((t) => t.classList.remove("active"));
+          tab.classList.add("active");
+
+          const tabName = tab.getAttribute("data-tab");
+          renderTable(tabName);
+        });
+      });
+
+      // Load initial tab
+      renderTable("users");
+    </script>
+  </body>
 </html>

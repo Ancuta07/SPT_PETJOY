@@ -19,8 +19,29 @@
         <div class="logo">
           <a href="index.html">PetJoy</a>
         </div>
-        <div class="user-info">
-          <span id="userName">Utilizator</span>
+        <div class="header-actions">
+          <a
+            href="index.html"
+            class="btn-back"
+            title="Înapoi la pagina principală"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+              <polyline points="9 22 9 12 15 12 15 22" />
+            </svg>
+            Meniu Principal
+          </a>
+          <div class="user-info">
+            <span id="userName">Utilizator</span>
+          </div>
         </div>
       </nav>
     </header>
@@ -50,7 +71,10 @@
         </div>
 
         <nav class="menu-nav">
-          <button class="menu-btn active" onclick="showSection('comenzi', event)">
+          <button
+            class="menu-btn active"
+            onclick="showSection('comenzi', event)"
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="20"

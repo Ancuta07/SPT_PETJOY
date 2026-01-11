@@ -5,39 +5,29 @@ import com.app.backend_service.repository.AppointmentRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class AppointmentService {
 
-    private final AppointmentRepository appointmentRepository;
+    private final AppointmentRepository repository;
 
-    public AppointmentService(AppointmentRepository appointmentRepository) {
-        this.appointmentRepository = appointmentRepository;
+    public AppointmentService(AppointmentRepository repository) {
+        this.repository = repository;
     }
 
-    // Creează o programare nouă
-    public Appointment createAppointment(Appointment appointment) {
-        return appointmentRepository.save(appointment);
+    public List<Appointment> getAll() {
+        return repository.findAll();
     }
 
-    // Găsește toate programările
-    public List<Appointment> getAllAppointments() {
-        return appointmentRepository.findAll();
+    public List<Appointment> getByEmail(String email) {
+        return repository.findByEmail(email);
     }
 
-    // Găsește programările pentru un email
-    public List<Appointment> getAppointmentsByEmail(String email) {
-        return appointmentRepository.findByEmail(email);
+    public Appointment create(Appointment appointment) {
+        return repository.save(appointment);
     }
 
-    // Găsește o programare după ID
-    public Optional<Appointment> getAppointmentById(Long id) {
-        return appointmentRepository.findById(id);
-    }
-
-    // Șterge o programare
-    public void deleteAppointment(Long id) {
-        appointmentRepository.deleteById(id);
+    public void delete(Long id) {
+        repository.deleteById(id);
     }
 }

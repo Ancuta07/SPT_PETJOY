@@ -21,7 +21,23 @@
             <li><a href="contact.html">CONTACTE</a></li>
             <li><a href="shop.html">SHOP</a></li>
             <li id="authButton">
-              <a href="autentificare.html" title="Autentificare">🔐</a>
+              <a href="autentificare.html" title="Autentificare">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                  <polyline points="16 17 21 12 16 7" />
+                  <line x1="21" y1="12" x2="9" y2="12" />
+                </svg>
+              </a>
             </li>
             <li id="profileButton" style="display: none">
               <a href="meniu.html" title="Profilul meu">👤</a>
@@ -237,7 +253,9 @@
               <div class="prod-title">${nume}</div>
               ${descriere ? `<div class="prod-desc">${descriere}</div>` : ``}
               <div class="price">${pret} lei</div>
-              <div class="stores">Stoc: ${stoc}</div>
+              <div class="stores" style="${
+                stoc <= 0 ? "color: red; font-weight: bold;" : ""
+              }">Stoc: ${stoc}</div>
               <button class="btn btn-primary" onclick="addToCart(${p.id})" ${
               stoc <= 0 ? "disabled" : ""
             }>
@@ -285,9 +303,13 @@
           row.innerHTML = `
             <div>${i.nume}</div>
             <div class="qty">
-              <button class="btn btn-outline" onclick="changeQty(${i.id},-1)">-</button>
+              <button class="btn btn-outline" onclick="changeQty(${
+                i.id
+              },-1)">-</button>
               ${i.qty}
-              <button class="btn btn-outline" onclick="changeQty(${i.id},1)">+</button>
+              <button class="btn btn-outline" onclick="changeQty(${
+                i.id
+              },1)">+</button>
             </div>
             <div>${(i.pret || 0) * i.qty} lei</div>
           `;
@@ -317,7 +339,10 @@
             .forEach((c) => c.classList.remove("active"));
           btn.classList.add("active");
 
-          renderProducts(btn.dataset.category, document.querySelector(".search").value);
+          renderProducts(
+            btn.dataset.category,
+            document.querySelector(".search").value
+          );
         })
       );
 
@@ -329,55 +354,65 @@
       });
 
       // checkout -> POST order către backend
-      document.getElementById("checkoutBtn").addEventListener("click", async () => {
-        if (cart.length === 0) {
-          alert("Coșul este gol!");
-          return;
-        }
-
-        const userStr = sessionStorage.getItem("petjoy_user");
-        if (!userStr) {
-          alert("Trebuie să te autentifici ca să finalizezi comanda.");
-          window.location.href = "autentificare.html";
-          return;
-        }
-
-        const user = JSON.parse(userStr);
-
-        const payload = {
-          email: user.email,
-          items: cart.map((c) => ({
-            productId: c.id,
-            quantity: c.qty,
-          })),
-        };
-
-        try {
-          const res = await fetch("http://localhost:8000/api/orders", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload),
-          });
-
-          if (!res.ok) {
-            const txt = await res.text();
-            alert("Eroare la plasarea comenzii: " + txt);
+      document
+        .getElementById("checkoutBtn")
+        .addEventListener("click", async () => {
+          if (cart.length === 0) {
+            alert("Coșul este gol!");
             return;
           }
 
-          alert("Comanda a fost plasată cu succes!");
-          cart = [];
-          updateCart();
+          const userStr = sessionStorage.getItem("petjoy_user");
+          if (!userStr) {
+            alert("Trebuie să te autentifici ca să finalizezi comanda.");
+            window.location.href = "autentificare.html";
+            return;
+          }
 
-          // reîncarcă produse (când backend va merge, vei vedea stoc actualizat)
-          loadProducts();
+          const user = JSON.parse(userStr);
 
-          window.location.href = "meniu.html";
-        } catch (err) {
-          console.error(err);
-          alert("Backend indisponibil. Nu pot plasa comanda acum.");
-        }
-      });
+          // Solicită adresa de livrare
+          const adresaLivrare = prompt("Introdu adresa de livrare:");
+          if (!adresaLivrare || adresaLivrare.trim() === "") {
+            alert("Adresa de livrare este obligatorie!");
+            return;
+          }
+
+          const payload = {
+            email: user.email,
+            adresaLivrare: adresaLivrare.trim(),
+            items: cart.map((c) => ({
+              productId: c.id,
+              quantity: c.qty,
+            })),
+          };
+
+          try {
+            const res = await fetch("http://localhost:8000/api/orders", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(payload),
+            });
+
+            if (!res.ok) {
+              const txt = await res.text();
+              alert("Eroare la plasarea comenzii: " + txt);
+              return;
+            }
+
+            alert("Comanda a fost plasată cu succes!");
+            cart = [];
+            updateCart();
+
+            // reîncarcă produse (când backend va merge, vei vedea stoc actualizat)
+            loadProducts();
+
+            window.location.href = "meniu.html";
+          } catch (err) {
+            console.error(err);
+            alert("Backend indisponibil. Nu pot plasa comanda acum.");
+          }
+        });
 
       // inițial
       updateCart();
