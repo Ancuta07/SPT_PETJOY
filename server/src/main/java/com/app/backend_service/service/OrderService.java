@@ -89,8 +89,65 @@ public class OrderService {
         return orderRepository.save(order);
     }
 
+    @Transactional
     public void delete(Long id) {
+        // Găsește comanda
+        Order order = orderRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Comanda cu ID " + id + " nu există"));
+
+        // Parsează produsele și returnează stocul
+        String produseJson = order.getProduse();
+        if (produseJson != null && !produseJson.isEmpty()) {
+            try {
+                // Parse manual JSON string
+                String[] items = produseJson.substring(1, produseJson.length() - 1).split("\\},\\{");
+                
+                for (String item : items) {
+                    // Extract productId și quantity
+                    String cleanItem = item.replace("{", "").replace("}", "");
+                    Long productId = null;
+                    Integer quantity = null;
+                    
+                    String[] fields = cleanItem.split(",");
+                    for (String field : fields) {
+                        String[] keyValue = field.split(":");
+                        if (keyValue.length == 2) {
+                            String key = keyValue[0].replace("\"", "").trim();
+                            String value = keyValue[1].replace("\"", "").trim();
+                            
+                            if (key.equals("productId")) {
+                                productId = Long.parseLong(value);
+                            } else if (key.equals("quantity")) {
+                                quantity = Integer.parseInt(value);
+                            }
+                        }
+                    }
+                    
+                    // Actualizează stocul
+                    if (productId != null && quantity != null) {
+                        Product product = productRepository.findById(productId).orElse(null);
+                        if (product != null) {
+                            product.setStoc(product.getStoc() + quantity);
+                            productRepository.save(product);
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                // Log error dar continuă cu ștergerea
+                System.err.println("Eroare la returnarea stocului: " + e.getMessage());
+            }
+        }
+
+        // Șterge comanda
         orderRepository.deleteById(id);
+    }
+
+    @Transactional
+    public Order updateStatus(Long id, Order.Status newStatus) {
+        Order order = orderRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Comanda cu ID " + id + " nu există"));
+        order.setStatus(newStatus);
+        return orderRepository.save(order);
     }
 
     private String escapeJson(String str) {

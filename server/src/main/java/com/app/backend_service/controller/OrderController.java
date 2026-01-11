@@ -41,7 +41,24 @@ public class OrderController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id) {
-        service.delete(id);
-        return ResponseEntity.ok().build();
+        try {
+            service.delete(id);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Eroare la ștergere: " + e.getMessage());
+        }
+    }
+
+    @PutMapping("/{id}/status")
+    public ResponseEntity<?> updateStatus(@PathVariable Long id, @RequestBody String status) {
+        try {
+            Order.Status newStatus = Order.Status.valueOf(status.replace("\"", "").trim());
+            Order order = service.updateStatus(id, newStatus);
+            return ResponseEntity.ok(order);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(400).body("Status invalid: " + e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Eroare la actualizare status: " + e.getMessage());
+        }
     }
 }

@@ -217,7 +217,7 @@
               adresa: o.adresaLivrare || "N/A",
               total: o.total,
               status: o.status,
-              data: new Date(o.createdAt).toLocaleString("ro-RO"),
+              data: new Date(o.createdAt).toLocaleDateString("ro-RO"),
               _raw: o,
             };
           });
@@ -295,6 +295,30 @@
               field === "stoc" ? "stocului" : "prețului"
             }!`
           );
+        }
+      }
+
+      // Update order status function
+      async function updateOrderStatus(orderId, newStatus) {
+        try {
+          const response = await fetch(`${API_BASE}/orders/${orderId}/status`, {
+            method: "PUT",
+            headers: { "Content-Type": "text/plain" },
+            body: newStatus,
+          });
+
+          if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(
+              errorText || `HTTP error! status: ${response.status}`
+            );
+          }
+
+          alert("Status actualizat cu succes!");
+          renderTable("orders");
+        } catch (error) {
+          console.error("Error updating status:", error);
+          alert("Eroare la actualizarea statusului: " + error.message);
         }
       }
 
@@ -385,6 +409,34 @@
             if (col === "rol") {
               const rolClass = value === "ADMIN" ? "admin" : "client";
               value = `<span class="badge badge-${rolClass}">${value}</span>`;
+            } else if (col === "status" && tabName === "orders") {
+              const statusValue = value;
+              const statusClass = value.toLowerCase().replace("_", "-");
+              value = `
+                <div class="inline-edit-container">
+                  <span class="badge badge-${statusClass}">${value}</span>
+                  <select id="status-${row.id}" class="inline-input-status">
+                    <option value="PENDING" ${
+                      statusValue === "PENDING" ? "selected" : ""
+                    }>PENDING</option>
+                    <option value="IN_PROCESS" ${
+                      statusValue === "IN_PROCESS" ? "selected" : ""
+                    }>IN_PROCESS</option>
+                    <option value="ON_THE_WAY" ${
+                      statusValue === "ON_THE_WAY" ? "selected" : ""
+                    }>ON_THE_WAY</option>
+                    <option value="DELIVERED" ${
+                      statusValue === "DELIVERED" ? "selected" : ""
+                    }>DELIVERED</option>
+                  </select>
+                  <button onclick="updateOrderStatus(${
+                    row.id
+                  }, document.getElementById('status-${row.id}').value)" 
+                          class="btn-save-inline" title="Salvează status">
+                    💾
+                  </button>
+                </div>
+              `;
             } else if (col === "status") {
               value = `<span class="badge badge-${value.toLowerCase()}">${value}</span>`;
             } else if (col === "tip") {

@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "orders")
@@ -27,7 +27,7 @@ public class Order {
     private String email;
 
     @Column(nullable = false, columnDefinition = "TEXT")
-    private String produse; // JSON string cu produsele: [{"productId": 1, "productName": "X", "quantity": 2, "priceAtOrder": 45.0}]
+    private String produse; 
 
     @Column(nullable = false)
     private String adresaLivrare;
@@ -36,19 +36,19 @@ public class Order {
     private Double total;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(nullable = false, length = 20)
     private Status status;
 
     @Column(nullable = false)
-    private LocalDateTime createdAt;
+    private LocalDate createdAt;
 
     @PrePersist
     void onCreate() {
-        createdAt = LocalDateTime.now();
+        createdAt = LocalDate.now();
         if (status == null) status = Status.PENDING;
     }
 
     public enum Status {
-        PENDING, CANCELLED, COMPLETED
+        PENDING, IN_PROCESS, ON_THE_WAY, DELIVERED
     }
 }

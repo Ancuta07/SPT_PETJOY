@@ -35,7 +35,11 @@ public class AppointmentController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id) {
-        service.delete(id);
-        return ResponseEntity.ok().build();
+        try {
+            service.delete(id);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Eroare la ștergere: " + e.getMessage());
+        }
     }
 }

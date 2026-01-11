@@ -74,7 +74,9 @@ async function loadUserOrders() {
 
   try {
     const response = await fetch(
-      `http://localhost:8000/api/orders/user/${encodeURIComponent(userData.email)}`
+      `http://localhost:8000/api/orders/user/${encodeURIComponent(
+        userData.email
+      )}`
     );
 
     if (!response.ok) {
@@ -96,8 +98,6 @@ async function loadUserOrders() {
     }
   }
 }
-
-
 
 // Încarcă programările utilizatorului
 async function loadUserAppointments() {
@@ -169,7 +169,7 @@ function createOrderCard(order) {
   // Parse produse JSON string
   let items = [];
   try {
-    if (typeof order.produse === 'string') {
+    if (typeof order.produse === "string") {
       items = JSON.parse(order.produse);
     } else if (Array.isArray(order.produse)) {
       items = order.produse;
@@ -177,7 +177,7 @@ function createOrderCard(order) {
       items = order.items;
     }
   } catch (e) {
-    console.error('Eroare la parsarea produselor:', e);
+    console.error("Eroare la parsarea produselor:", e);
     items = [];
   }
 
@@ -197,10 +197,15 @@ function createOrderCard(order) {
   card.innerHTML = `
     <h3>Comanda #${order.id}</h3>
     <p><strong>Status:</strong> ${status}</p>
+    <p><strong>Data:</strong> ${new Date(order.createdAt).toLocaleDateString(
+      "ro-RO"
+    )}</p>
     <p><strong>Total:</strong> ${total} lei</p>
     ${itemsHtml}
     <div class="order-actions" style="margin-top:12px;">
-      <button class="btn-danger" onclick="deleteOrder(${order.id})">Șterge</button>
+      <button class="btn-danger" onclick="deleteOrder(${
+        order.id
+      })">Șterge</button>
     </div>
   `;
 
@@ -211,20 +216,14 @@ function createOrderCard(order) {
 async function deleteOrder(orderId) {
   if (!confirm("Sigur doriți să ștergeți această comandă?")) return;
 
-  const userStr = sessionStorage.getItem("petjoy_user");
-  if (!userStr) return;
-  const userData = JSON.parse(userStr);
-
   try {
-    // Endpoint propus: DELETE /api/orders/{id}?email={userEmail}
     const response = await fetch(
-      `http://localhost:8000/api/orders/${orderId}?email=${encodeURIComponent(userData.email)}`,
+      `http://localhost:8000/api/orders/${orderId}`,
       { method: "DELETE" }
     );
 
     if (!response.ok) {
-      const txt = await response.text();
-      throw new Error(txt || "Eroare la ștergere");
+      throw new Error("Eroare la ștergere");
     }
 
     alert("✅ Comanda a fost ștearsă!");
@@ -234,7 +233,6 @@ async function deleteOrder(orderId) {
     alert("❌ Nu am putut șterge comanda. Verifică backend-ul/endpoint-ul.");
   }
 }
-
 
 // Afișează programările în interfață
 function displayAppointments(appointments) {
@@ -368,7 +366,9 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   let u;
-  try { u = JSON.parse(userStr); } catch { 
+  try {
+    u = JSON.parse(userStr);
+  } catch {
     sessionStorage.removeItem("petjoy_user");
     window.location.href = "autentificare.html";
     return;
