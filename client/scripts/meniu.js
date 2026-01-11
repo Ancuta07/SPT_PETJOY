@@ -4,6 +4,7 @@ document.addEventListener("DOMContentLoaded", function () {
   loadUserData();
   loadUserOrders();
   loadUserAppointments();
+  loadLocations();
 });
 
 // Verifică dacă utilizatorul este autentificat
@@ -301,9 +302,14 @@ function createAppointmentCard(appointment) {
 
   card.innerHTML = `
     <div class="appointment-icon">${isUpcoming ? "📅" : "📋"}</div>
-    <h3>Programare ${appointment.clinica}</h3>
+    <h3>Programare ${appointment.oras || ""}</h3>
     <p class="appointment-date">${formattedDate}, ${formattedTime}</p>
-    <p class="appointment-location">${appointment.clinica}</p>
+    <p class="appointment-location"><strong>Oraș:</strong> ${
+      appointment.oras || "N/A"
+    }</p>
+    <p class="appointment-location"><strong>Clinică:</strong> ${
+      appointment.clinica
+    }</p>
     <p class="appointment-pet"><strong>Client:</strong> ${appointment.nume} ${
     appointment.prenume
   }</p>
@@ -358,6 +364,360 @@ function openMap(address) {
   )}`;
   window.open(url, "_blank", "width=800,height=600");
 }
+
+// Încarcă locațiile și detectează orașul utilizatorului
+async function loadLocations() {
+  const locationText = document.getElementById("userLocationText");
+  const container = document.getElementById("locatii-container");
+
+  if (!container) return;
+
+  try {
+    // Încarcă toate locațiile din baza de date
+    const response = await fetch("http://localhost:8000/api/locations");
+    if (!response.ok) throw new Error("Eroare la încărcarea locațiilor");
+
+    const locations = await response.json();
+
+    // Detectează orașul utilizatorului
+    detectUserCity(locations, locationText, container);
+  } catch (error) {
+    console.error("Eroare la încărcarea locațiilor:", error);
+    if (locationText) {
+      locationText.textContent = "⚠️ Eroare la încărcarea locațiilor";
+    }
+    if (container) {
+      container.innerHTML =
+        '<p style="text-align:center; color:#666;">Nu s-au putut încărca locațiile</p>';
+    }
+  }
+}
+
+// Variabile globale pentru locații
+let allLocationsData = [];
+let userDetectedCity = null;
+
+// Normalizează string-ul eliminând diacritice pentru comparație
+function normalizeString(str) {
+  return str
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .trim();
+}
+
+// Detectează orașul utilizatorului prin Geolocation API
+function detectUserCity(locations, locationText, container) {
+  allLocationsData = locations;
+
+  // Verifică dacă există oraș salvat manual în localStorage
+  const savedCity = localStorage.getItem("petjoy_selected_city");
+  if (savedCity) {
+    console.log("Folosim orașul salvat:", savedCity);
+    const localLocations = locations.filter(
+      (loc) => normalizeString(loc.oras) === normalizeString(savedCity)
+    );
+
+    if (localLocations.length > 0) {
+      userDetectedCity = savedCity;
+      displayLocations(
+        localLocations,
+        savedCity + " (salvat)",
+        container,
+        locationText,
+        true
+      );
+      return;
+    }
+  }
+
+  if (!navigator.geolocation) {
+    // Dacă browserul nu suportă geolocation, afișează toate locațiile
+    displayLocations(
+      locations,
+      "Toate locațiile",
+      container,
+      locationText,
+      false
+    );
+    return;
+  }
+
+  if (locationText) {
+    locationText.textContent = "📍 Se detectează locația ta...";
+  }
+
+  navigator.geolocation.getCurrentPosition(
+    async (position) => {
+      const { latitude, longitude } = position.coords;
+
+      try {
+        // Reverse geocoding pentru a obține orașul
+        const city = await getCityFromCoordinates(latitude, longitude);
+
+        if (city) {
+          userDetectedCity = city;
+
+          // Filtrează locațiile după orașul utilizatorului (fără diacritice)
+          const normalizedCity = normalizeString(city);
+          const localLocations = locations.filter(
+            (loc) => normalizeString(loc.oras) === normalizedCity
+          );
+
+          console.log(
+            `Oraș detectat: ${city}, Locații găsite: ${localLocations.length}`
+          );
+
+          if (localLocations.length > 0) {
+            // Afișează DOAR locațiile din orașul utilizatorului
+            displayLocations(
+              localLocations,
+              city,
+              container,
+              locationText,
+              true
+            );
+          } else {
+            // Dacă nu există locații în orașul utilizatorului, afișează toate
+            displayLocations(
+              locations,
+              city + " (nu există locații)",
+              container,
+              locationText,
+              false
+            );
+          }
+        } else {
+          displayLocations(
+            locations,
+            "Locația ta",
+            container,
+            locationText,
+            false
+          );
+        }
+      } catch (error) {
+        console.error("Eroare la reverse geocoding:", error);
+        displayLocations(
+          locations,
+          "Locația ta",
+          container,
+          locationText,
+          false
+        );
+      }
+    },
+    (error) => {
+      console.log("Geolocation error:", error);
+      // Dacă utilizatorul refuză permisiunea, afișează toate locațiile
+      displayLocations(
+        locations,
+        "Toate locațiile disponibile",
+        container,
+        locationText,
+        false
+      );
+    },
+    {
+      enableHighAccuracy: true,
+      timeout: 10000,
+      maximumAge: 0,
+    }
+  );
+}
+
+// Obține orașul din coordonate folosind Nominatim (OpenStreetMap)
+async function getCityFromCoordinates(lat, lon) {
+  try {
+    // Folosim zoom 16 pentru acuratețe maximă la nivel de oraș
+    const response = await fetch(
+      `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=16&addressdetails=1`,
+      {
+        headers: {
+          "User-Agent": "PetJoy App",
+        },
+      }
+    );
+
+    if (!response.ok) throw new Error("Eroare la reverse geocoding");
+
+    const data = await response.json();
+
+    console.log("Reverse geocoding result:", data);
+    console.log("Address details:", data.address);
+
+    let city = data.address?.city || data.address?.town;
+    if (!city) {
+      city = data.address?.municipality || data.address?.village;
+    }
+    if (!city) {
+      city = data.address?.county || data.address?.state;
+    }
+
+    console.log("Oraș detectat:", city);
+    console.log(
+      "Toate orașele disponibile din baza de date:",
+      allLocationsData.map((l) => l.oras)
+    );
+
+    return city;
+  } catch (error) {
+    console.error("Eroare la getCityFromCoordinates:", error);
+    return null;
+  }
+}
+
+// Afișează locațiile
+function displayLocations(
+  locations,
+  userCity,
+  container,
+  locationText,
+  isFiltered
+) {
+  if (locationText) {
+    locationText.innerHTML = `📍 ${userCity}`;
+
+    // Adaugă butonul "Afișează toate" dacă sunt filtrate locațiile
+    if (isFiltered && allLocationsData.length > locations.length) {
+      locationText.innerHTML += ` <button onclick="showAllLocations()" style="margin-left: 10px; padding: 5px 12px; background: #667eea; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 13px;">Afișează toate (${allLocationsData.length})</button>`;
+    }
+
+    // Adaugă buton pentru alegere manuală dacă orașul este detectat
+    if (userDetectedCity) {
+      const savedCity = localStorage.getItem("petjoy_selected_city");
+      if (savedCity) {
+        locationText.innerHTML += ` <button onclick="clearSavedCity()" style="margin-left: 5px; padding: 5px 12px; background: #ed8936; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 13px;">Resetează orașul</button>`;
+      }
+      locationText.innerHTML += ` <button onclick="showCitySelector()" style="margin-left: 5px; padding: 5px 12px; background: #f56565; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 13px;">Schimbă orașul</button>`;
+    }
+  }
+
+  if (!container) return;
+
+  if (locations.length === 0) {
+    container.innerHTML =
+      '<p style="text-align:center; color:#666;">Nu există locații disponibile</p>';
+    return;
+  }
+
+  container.innerHTML = "";
+
+  locations.forEach((location) => {
+    const card = document.createElement("div");
+    card.className = "location-card";
+
+    let tipText = "Locație";
+    if (location.tip === "CLINICA") {
+      tipText = "Clinică";
+    } else if (location.tip === "CENTRU_ADOPTIE") {
+      tipText = "Centru de Adopție";
+    } else if (location.tip === "MAGAZIN") {
+      tipText = "Magazin";
+    }
+
+    card.innerHTML = `
+      <div class="location-image" style="background-image: url('${location.imageUrl}')"></div>
+      <div class="location-body">
+        <h3>${tipText} ${location.oras}</h3>
+        <p class="location-address">📍 ${location.adresa}</p>
+        <p class="location-info">📞 ${location.telefon}</p>
+        <p class="location-info">🕒 ${location.program}</p>
+        <button class="btn-map" onclick="openMap('${location.oras}, ${location.adresa}')">
+          Vezi pe hartă
+        </button>
+      </div>
+    `;
+
+    container.appendChild(card);
+  });
+}
+
+// Afișează toate locațiile
+function showAllLocations() {
+  const locationText = document.getElementById("userLocationText");
+  const container = document.getElementById("locatii-container");
+
+  if (container && allLocationsData.length > 0) {
+    const cityText = userDetectedCity
+      ? `${userDetectedCity} - Toate locațiile`
+      : "Toate locațiile";
+    displayLocations(
+      allLocationsData,
+      cityText,
+      container,
+      locationText,
+      false
+    );
+  }
+}
+
+// Afișează selectorul de oraș
+function showCitySelector() {
+  const locationText = document.getElementById("userLocationText");
+
+  if (!locationText || allLocationsData.length === 0) return;
+
+  // Extrage orașele unice din locații
+  const cities = [...new Set(allLocationsData.map((loc) => loc.oras))].sort();
+
+  // Creează dropdown pentru selecție
+  const selectHTML = cities
+    .map((city) => `<option value="${city}">${city}</option>`)
+    .join("");
+
+  locationText.innerHTML = `
+    📍 Alege orașul tău: 
+    <select id="citySelector" style="margin-left: 10px; padding: 5px 10px; border: 2px solid #667eea; border-radius: 5px; font-size: 14px; cursor: pointer;">
+      <option value="">-- Selectează --</option>
+      ${selectHTML}
+    </select>
+    <button onclick="filterBySelectedCity()" style="margin-left: 5px; padding: 5px 12px; background: #48bb78; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 13px;">Filtrează</button>
+    <button onclick="showAllLocations()" style="margin-left: 5px; padding: 5px 12px; background: #667eea; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 13px;">Toate (${allLocationsData.length})</button>
+  `;
+}
+
+// Șterge orașul salvat și redetectează automat
+function clearSavedCity() {
+  localStorage.removeItem("petjoy_selected_city");
+  console.log("Oraș salvat șters. Redetectare automată...");
+  loadLocations(); // Reîncarcă locațiile pentru detectare automată
+}
+
+// Filtrează locațiile după orașul selectat manual
+function filterBySelectedCity() {
+  const selector = document.getElementById("citySelector");
+  const locationText = document.getElementById("userLocationText");
+  const container = document.getElementById("locatii-container");
+
+  if (!selector || !container) return;
+
+  const selectedCity = selector.value;
+
+  if (!selectedCity) {
+    alert("Te rog selectează un oraș!");
+    return;
+  }
+
+  // Salvează orașul selectat în localStorage
+  localStorage.setItem("petjoy_selected_city", selectedCity);
+  console.log("Oraș salvat în localStorage:", selectedCity);
+
+  // Filtrează locațiile după orașul selectat
+  const filteredLocations = allLocationsData.filter(
+    (loc) => loc.oras === selectedCity
+  );
+
+  userDetectedCity = selectedCity;
+  displayLocations(
+    filteredLocations,
+    selectedCity + " (salvat)",
+    container,
+    locationText,
+    true
+  );
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   const userStr = sessionStorage.getItem("petjoy_user");
   if (!userStr) {

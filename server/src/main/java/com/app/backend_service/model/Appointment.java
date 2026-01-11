@@ -33,6 +33,9 @@ public class Appointment {
     private String clinica;
 
     @Column(nullable = false)
+    private String oras;
+
+    @Column(nullable = false)
     private LocalDateTime dataOra;
 
     @Column(nullable = false)

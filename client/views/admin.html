@@ -105,6 +105,81 @@
         </div>
       </div>
 
+      <!-- Modal pentru adăugare locație -->
+      <div id="addLocationModal" class="modal-overlay">
+        <div class="modal-content">
+          <h2>Adaugă Locație Nouă</h2>
+          <form id="addLocationForm" onsubmit="addLocation(event)">
+            <div class="form-group">
+              <label>Tip:</label>
+              <select id="newLocationTip" required class="form-input">
+                <option value="">-- Selectează --</option>
+                <option value="CLINICA">Clinică</option>
+                <option value="CENTRU_ADOPTIE">Centru de Adopție</option>
+                <option value="MAGAZIN">Magazin</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Oraș:</label>
+              <input
+                type="text"
+                id="newLocationOras"
+                required
+                class="form-input"
+              />
+            </div>
+            <div class="form-group">
+              <label>Adresă:</label>
+              <input
+                type="text"
+                id="newLocationAdresa"
+                required
+                class="form-input"
+              />
+            </div>
+            <div class="form-group">
+              <label>Telefon:</label>
+              <input
+                type="text"
+                id="newLocationTelefon"
+                required
+                class="form-input"
+                placeholder="Ex: 0268-123456"
+              />
+            </div>
+            <div class="form-group">
+              <label>Program:</label>
+              <input
+                type="text"
+                id="newLocationProgram"
+                required
+                class="form-input"
+                placeholder="Ex: Luni-Vineri: 09:00-18:00"
+              />
+            </div>
+            <div class="form-group">
+              <label>URL Imagine:</label>
+              <input
+                type="text"
+                id="newLocationImage"
+                class="form-input"
+                placeholder="https://example.com/image.jpg (opțional)"
+              />
+            </div>
+            <div class="form-actions">
+              <button
+                type="button"
+                onclick="hideAddLocationForm()"
+                class="btn-cancel"
+              >
+                Anulează
+              </button>
+              <button type="submit" class="btn-submit">Adaugă</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
       <div class="tabs">
         <button data-tab="users" class="active">👤 Users</button>
         <button data-tab="appointments">📅 Appointments</button>
@@ -179,6 +254,7 @@
             nume: `${a.nume} ${a.prenume}`,
             email: a.email,
             telefon: a.telefon,
+            oras: a.oras || "N/A",
             clinica: a.clinica,
             data: new Date(a.dataOra).toLocaleString("ro-RO"),
             _raw: a,
@@ -332,6 +408,15 @@
         document.getElementById("addProductForm").reset();
       }
 
+      function showAddLocationForm() {
+        document.getElementById("addLocationModal").style.display = "block";
+      }
+
+      function hideAddLocationForm() {
+        document.getElementById("addLocationModal").style.display = "none";
+        document.getElementById("addLocationForm").reset();
+      }
+
       // Add product function
       async function addProduct(event) {
         event.preventDefault();
@@ -365,6 +450,40 @@
         }
       }
 
+      // Add location function
+      async function addLocation(event) {
+        event.preventDefault();
+
+        const imageUrl = document.getElementById("newLocationImage").value;
+        const newLocation = {
+          tip: document.getElementById("newLocationTip").value,
+          oras: document.getElementById("newLocationOras").value,
+          adresa: document.getElementById("newLocationAdresa").value,
+          telefon: document.getElementById("newLocationTelefon").value,
+          program: document.getElementById("newLocationProgram").value,
+          imageUrl: imageUrl || null,
+        };
+
+        try {
+          const response = await fetch(`${API_BASE}/locations`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(newLocation),
+          });
+
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+
+          alert("Locație adăugată cu succes!");
+          hideAddLocationForm();
+          renderTable("locations");
+        } catch (error) {
+          console.error("Error adding location:", error);
+          alert("Eroare la adăugarea locației!");
+        }
+      }
+
       async function renderTable(tabName) {
         const content = document.getElementById("content");
         content.innerHTML = '<div class="loading">Se încarcă datele...</div>';
@@ -385,12 +504,20 @@
           html += `<th>${col.toUpperCase()}</th>`;
         });
 
-        // Add button in header for products tab
+        // Add button in header for products and locations tabs
         if (tabName === "products") {
           html += `<th class="text-right">
             <button onclick="showAddProductForm()" 
                     class="btn-add-product"
                     title="Adaugă produs nou">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-plus-icon lucide-plus"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+            </button>
+          </th>`;
+        } else if (tabName === "locations") {
+          html += `<th class="text-right">
+            <button onclick="showAddLocationForm()" 
+                    class="btn-add-product"
+                    title="Adaugă locație nouă">
               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-plus-icon lucide-plus"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
             </button>
           </th>`;

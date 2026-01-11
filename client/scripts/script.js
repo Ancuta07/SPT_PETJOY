@@ -63,10 +63,9 @@ function initAccountDropdown() {
     };
   }
 
-  // Redirect dupa rol
-  const rol = (user.rol || "").toUpperCase();
-  btn.href = rol === "ADMIN" ? "admin.html" : "meniu.html";
-  btn.title = rol === "ADMIN" ? "Panou Admin" : "Profilul meu";
+  // Redirect la meniu.html pentru toți utilizatorii (inclusiv admin)
+  btn.href = "meniu.html";
+  btn.title = "Profilul meu";
 }
 
 // ================== INIT ==================

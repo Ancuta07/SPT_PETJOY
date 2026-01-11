@@ -127,7 +127,6 @@
             Locații în Apropiere
           </button>
 
-          <!-- Buton ADMIN (ascuns implicit, meniu.js îl afișează doar dacă rolul e ADMIN) -->
           <button
             class="menu-btn"
             id="adminBtn"
@@ -205,84 +204,11 @@
         <section id="locatii" class="section">
           <h1>Locații în Apropiere</h1>
           <div class="location-info">
-            <p>📍 Locația ta: Criuleni, Moldova</p>
+            <p id="userLocationText">📍 Se detectează locația...</p>
           </div>
 
-          <div class="cards-grid">
-            <div class="location-card">
-              <div
-                class="location-image"
-                style="background-image: url('../images/brasovclinica.jpeg')"
-              ></div>
-              <div class="location-body">
-                <h3>Clinica Brașov</h3>
-                <p class="location-address">
-                  📍 Strada Aurel Marin nr.3, Brașov
-                </p>
-                <p class="location-distance">~450 km</p>
-                <div class="location-services">
-                  <span class="service-badge">Veterinar</span>
-                  <span class="service-badge">Urgențe 24/7</span>
-                  <span class="service-badge">Salon</span>
-                </div>
-                <button
-                  class="btn-map"
-                  onclick="openMap('Brașov, Strada Aurel Marin 3')"
-                >
-                  Vezi pe hartă
-                </button>
-              </div>
-            </div>
-
-            <div class="location-card">
-              <div
-                class="location-image"
-                style="background-image: url('../images/bucuresticlinica.jpg')"
-              ></div>
-              <div class="location-body">
-                <h3>Clinica București</h3>
-                <p class="location-address">
-                  📍 Strada Doamna Ghica nr.133, București
-                </p>
-                <p class="location-distance">~380 km</p>
-                <div class="location-services">
-                  <span class="service-badge">Veterinar</span>
-                  <span class="service-badge">Chirurgie</span>
-                  <span class="service-badge">Analize</span>
-                </div>
-                <button
-                  class="btn-map"
-                  onclick="openMap('București, Strada Doamna Ghica 133')"
-                >
-                  Vezi pe hartă
-                </button>
-              </div>
-            </div>
-
-            <div class="location-card">
-              <div
-                class="location-image"
-                style="background-image: url('../images/sibiuc.jpg')"
-              ></div>
-              <div class="location-body">
-                <h3>Clinica Sibiu</h3>
-                <p class="location-address">
-                  📍 Strada Semaforului nr.10, Sibiu
-                </p>
-                <p class="location-distance">~500 km</p>
-                <div class="location-services">
-                  <span class="service-badge">Veterinar</span>
-                  <span class="service-badge">Vaccinări</span>
-                  <span class="service-badge">Salon</span>
-                </div>
-                <button
-                  class="btn-map"
-                  onclick="openMap('Sibiu, Strada Semaforului 10')"
-                >
-                  Vezi pe hartă
-                </button>
-              </div>
-            </div>
+          <div class="cards-grid" id="locatii-container">
+            <!-- Locațiile vor fi încărcate dinamic din baza de date -->
           </div>
         </section>
       </main>

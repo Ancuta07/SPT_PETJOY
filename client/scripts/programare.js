@@ -147,8 +147,19 @@ document.addEventListener("DOMContentLoaded", function () {
       const telefon = document
         .getElementById("telefon-cifre-strict")
         .value.trim();
+      const oras = document.getElementById("oras").value;
       const clinica = document.getElementById("clinica").value;
       const dataOraInput = document.getElementById("data-ora-programare").value;
+
+      // Validare oraș
+      if (!oras) {
+        showModal(
+          "error",
+          "Eroare la validare",
+          "Te rog să selectezi un oraș!"
+        );
+        return;
+      }
 
       // Validare clinică
       if (!clinica) {
@@ -191,6 +202,7 @@ document.addEventListener("DOMContentLoaded", function () {
         prenume,
         email,
         telefon,
+        oras,
         clinica,
         dataOra,
       };
@@ -271,7 +283,10 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 });
 
-// Funcție pentru încărcarea clinicilor din baza de date
+// Variabilă globală pentru locații
+let allClinics = [];
+
+// Funcție pentru încărcarea orașelor și clinicilor din baza de date
 async function loadClinics() {
   try {
     const response = await fetch(
@@ -279,21 +294,15 @@ async function loadClinics() {
     );
     if (!response.ok) throw new Error("Eroare la încărcarea clinicilor");
 
-    const locations = await response.json();
-    const clinicSelect = document.getElementById("clinica");
+    allClinics = await response.json();
 
-    if (clinicSelect) {
-      // Păstrăm prima opțiune (placeholder)
-      clinicSelect.innerHTML =
-        '<option value="" disabled selected>Alege clinica</option>';
+    // Încarcă orașele unice
+    loadCities();
 
-      // Adăugăm clinicile din baza de date
-      locations.forEach((location) => {
-        const option = document.createElement("option");
-        option.value = location.adresa; // sau location.id, în funcție de preferință
-        option.textContent = `${location.oras} - ${location.adresa}`;
-        clinicSelect.appendChild(option);
-      });
+    // Adaugă event listener pentru filtrarea clinicilor
+    const orasSelect = document.getElementById("oras");
+    if (orasSelect) {
+      orasSelect.addEventListener("change", filterClinicsByCity);
     }
   } catch (error) {
     console.error("Eroare la încărcarea clinicilor:", error);
@@ -303,4 +312,49 @@ async function loadClinics() {
       "Eroare la încărcarea clinicilor. Te rog reîncearcă."
     );
   }
+}
+
+// Încarcă orașele unice în dropdown
+function loadCities() {
+  const orasSelect = document.getElementById("oras");
+  if (!orasSelect) return;
+
+  // Extrage orașele unice
+  const cities = [...new Set(allClinics.map((loc) => loc.oras))].sort();
+
+  orasSelect.innerHTML =
+    '<option value="" disabled selected>Alege orașul</option>';
+
+  cities.forEach((city) => {
+    const option = document.createElement("option");
+    option.value = city;
+    option.textContent = city;
+    orasSelect.appendChild(option);
+  });
+}
+
+// Filtrează clinicile după orașul selectat
+function filterClinicsByCity() {
+  const orasSelect = document.getElementById("oras");
+  const clinicSelect = document.getElementById("clinica");
+
+  if (!orasSelect || !clinicSelect) return;
+
+  const selectedCity = orasSelect.value;
+
+  // Resetează dropdown-ul clinicilor
+  clinicSelect.innerHTML =
+    '<option value="" disabled selected>Alege clinica</option>';
+
+  if (!selectedCity) return;
+
+  // Filtrează clinicile după oraș
+  const filteredClinics = allClinics.filter((loc) => loc.oras === selectedCity);
+
+  filteredClinics.forEach((location) => {
+    const option = document.createElement("option");
+    option.value = location.adresa;
+    option.textContent = location.adresa;
+    clinicSelect.appendChild(option);
+  });
 }
