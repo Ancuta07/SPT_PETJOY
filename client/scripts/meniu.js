@@ -304,7 +304,7 @@ function createAppointmentCard(appointment) {
     <h3>Programare ${appointment.clinica}</h3>
     <p class="appointment-date">${formattedDate}, ${formattedTime}</p>
     <p class="appointment-location">${appointment.clinica}</p>
-    <p class="appointment-pet"><strong>Pacient:</strong> ${appointment.nume} ${
+    <p class="appointment-pet"><strong>Client:</strong> ${appointment.nume} ${
     appointment.prenume
   }</p>
     <p class="appointment-contact"><strong>Telefon:</strong> ${

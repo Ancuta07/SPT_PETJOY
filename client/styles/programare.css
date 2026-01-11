@@ -46,6 +46,7 @@ body {
 .nav-links a:hover {
   color: #c5a3ff;
 }
+
 /*  TITLU  */
 .titlu {
   width: 800px;
@@ -81,7 +82,7 @@ form {
   }
 }
 
-/* STRUCTURĂ imputbox */
+/* STRUCTURĂ inputbox */
 .inputbox {
   display: flex;
   align-items: center;
@@ -123,12 +124,12 @@ form {
 /* butoane */
 .buton {
   display: flex;
-  justify-content: center; /* Centrează pe orizontală */
+  justify-content: center;
   margin: 10px 0;
 }
 
 .buton input {
-  width: 200px; /* Poți ajusta dimensiunea */
+  width: 200px;
   border: none;
   padding: 12px 0;
   border-radius: 10px;
@@ -160,11 +161,108 @@ form {
   transform: scale(1.03);
 }
 
-/* ======= ERORI ======= */
-.error-message {
-  color: #ffaaaa;
-  font-size: 13px;
-  margin-top: 3px;
+/* ======= MODAL STYLES ======= */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  z-index: 1000;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.modal-content {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.95),
+    rgba(240, 240, 255, 0.95)
+  );
+  padding: 40px;
+  border-radius: 20px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  max-width: 500px;
+  width: 90%;
+  text-align: center;
+  animation: slideDown 0.4s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -60%);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
+}
+
+.modal-icon {
+  font-size: 60px;
+  margin-bottom: 20px;
+}
+
+.modal-icon.success {
+  color: #4caf50;
+}
+
+.modal-icon.error {
+  color: #f44336;
+}
+
+.modal-title {
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 15px;
+  color: #333;
+}
+
+.modal-message {
+  font-size: 16px;
+  color: #555;
+  margin-bottom: 30px;
+  line-height: 1.6;
+}
+
+.modal-button {
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  padding: 12px 40px;
+  border-radius: 10px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 500;
+}
+
+.modal-button:hover {
+  background-color: #45a049;
+  transform: scale(1.05);
+}
+
+.modal-button.error {
+  background-color: #f44336;
+}
+
+.modal-button.error:hover {
+  background-color: #da190b;
 }
 
 /* RESPONSIVE  */
@@ -182,5 +280,9 @@ form {
   .titlu,
   form {
     width: 90%;
+  }
+
+  .modal-content {
+    padding: 30px 20px;
   }
 }

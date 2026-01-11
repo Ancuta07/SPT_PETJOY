@@ -72,4 +72,57 @@ function initAccountDropdown() {
 // ================== INIT ==================
 document.addEventListener("DOMContentLoaded", () => {
   initAccountDropdown();
+  loadLocations();
 });
+
+// ================== LOAD LOCATIONS ==================
+async function loadLocations() {
+  try {
+    const response = await fetch("http://localhost:8000/api/locations");
+    if (!response.ok) throw new Error("Eroare la încărcarea locațiilor");
+
+    const locations = await response.json();
+
+    // Separă clinicile de centrele de adopție
+    const clinici = locations.filter((loc) => loc.tip === "CLINICA");
+    const centre = locations.filter((loc) => loc.tip === "CENTRU_ADOPTIE");
+
+    // Afișează clinicile
+    const cliniciContainer = document.getElementById("clinici-container");
+    if (cliniciContainer) {
+      cliniciContainer.innerHTML = "";
+      clinici.forEach((clinica) => {
+        const div = document.createElement("div");
+        div.className = "clinici-l";
+        div.onclick = () => openMap(`${clinica.oras}, ${clinica.adresa}`);
+        div.innerHTML = `
+          <img src="${clinica.imageUrl}" alt="Clinica ${clinica.oras}" />
+          <div class="text">
+            <h3>${clinica.oras.toUpperCase()}</h3>
+            <p>${clinica.adresa}</p>
+          </div>
+        `;
+        cliniciContainer.appendChild(div);
+      });
+    }
+
+    // Afișează centrele de adopție
+    const adoptieContainer = document.getElementById("adoptie-container");
+    if (adoptieContainer) {
+      adoptieContainer.innerHTML = "";
+      centre.forEach((centru) => {
+        const div = document.createElement("div");
+        div.className = "adoptie-l";
+        div.onclick = () => openMap(`${centru.oras}, ${centru.adresa}`);
+        div.innerHTML = `
+          <h3>${centru.oras.toUpperCase()}</h3>
+          <img src="${centru.imageUrl}" alt="Adopție ${centru.oras}" />
+          <p>${centru.adresa}</p>
+        `;
+        adoptieContainer.appendChild(div);
+      });
+    }
+  } catch (error) {
+    console.error("Eroare la încărcarea locațiilor:", error);
+  }
+}

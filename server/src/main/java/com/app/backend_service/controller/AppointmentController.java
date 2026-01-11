@@ -33,6 +33,18 @@ public class AppointmentController {
         return ResponseEntity.ok(service.create(appointment));
     }
 
+    @GetMapping("/check-availability")
+    public ResponseEntity<?> checkAvailability(
+            @RequestParam String clinica,
+            @RequestParam String dataOra) {
+        boolean available = service.isAvailable(clinica, dataOra);
+        if (available) {
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.status(409).body("Ora este deja ocupată");
+        }
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id) {
         try {

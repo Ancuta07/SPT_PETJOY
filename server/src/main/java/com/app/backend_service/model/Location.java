@@ -31,6 +31,9 @@ public class Location {
     @Column(nullable = false)
     private String program;
 
+    @Column(nullable = true)
+    private String imageUrl;
+
     public enum Tip {
         CLINICA,
         CENTRU_ADOPTIE,
